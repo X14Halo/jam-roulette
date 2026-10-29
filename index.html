@@ -84,8 +84,21 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 }
 .round:active { transform: scale(.92); }
 .round svg { width: 21px; height: 21px; }
+/* step panel: the three rolls, each with keep (lock) and dice */
+.steps { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 2px 12px 2px 14px; }
+.step { --c: var(--ink); display: flex; align-items: center; gap: 10px; min-height: 66px; border-top: 0.5px solid var(--line); }
+.step:first-child { border-top: 0; }
+.step.drums { --c: var(--drums); } .step.strum { --c: var(--strum); } .step.chords { --c: var(--chords); }
+.step .num { width: 28px; height: 28px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 15px; font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) calc(var(--tint-a) * 100%), transparent); transition: background .2s, color .2s; }
+.step.kept .num { background: var(--c); color: #fff; }
+.step-txt { flex: 1; min-width: 0; }
+.step-txt b { display: block; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.step-txt span { display: block; font-size: 14px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.step.empty-step .step-txt span { color: var(--ink-3); }
+.step .tool { flex: none; }
+.step .tool.lock[hidden] { display: block !important; visibility: hidden; }
 .roll-all {
-  width: 100%; height: 56px; border-radius: 18px; margin-bottom: 14px;
+  width: 100%; height: 56px; border-radius: 18px; margin: 12px 0 16px;
   display: flex; align-items: center; justify-content: center; gap: 10px;
   background: var(--ink); color: var(--bg); font-size: 18px; font-weight: 700; letter-spacing: -0.01em;
   transition: transform .15s ease, opacity .2s;
@@ -99,7 +112,7 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 .card {
   --c: var(--ink);
   background: var(--card); border-radius: var(--r); box-shadow: var(--shadow);
-  padding: 12px 14px 16px 18px; margin-bottom: 12px;
+  padding: 14px 16px 16px 18px; margin-bottom: 12px;
   transition: box-shadow .2s;
 }
 .card.drums { --c: var(--drums); }
@@ -107,7 +120,7 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 .card.chords { --c: var(--chords); }
 .card.chal { --c: var(--modes); }
 .card.locked { box-shadow: var(--shadow), inset 0 0 0 2px color-mix(in srgb, var(--c) 55%, transparent); }
-.head { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.head { display: flex; align-items: center; gap: 10px; min-height: 26px; }
 .label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--c); }
 .label i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); flex: none; }
 .label span { color: var(--ink-3); font-weight: 600; letter-spacing: .02em; text-transform: none; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -315,15 +328,31 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
     <h1>Jam Roulette</h1>
     <button class="round" id="setBtn" aria-label="Settings"></button>
   </header>
-  <button class="roll-all" id="rollAll"><span data-icon="dice"></span><span id="rollLabel">Roll all</span></button>
+  <section class="steps" aria-label="Build your jam">
+    <div class="step drums" data-step="drum">
+      <span class="num">1</span>
+      <div class="step-txt"><b>Roll drums</b><span id="stepDrum"></span></div>
+      <button class="tool lock" data-lock="drum" aria-pressed="false" aria-label="Keep drums"></button>
+      <button class="tool dice" data-roll="drum" aria-label="Roll new drums"></button>
+    </div>
+    <div class="step strum" data-step="strum">
+      <span class="num">2</span>
+      <div class="step-txt"><b>Roll strum pattern</b><span id="stepStrum"></span></div>
+      <button class="tool lock" data-lock="strum" aria-pressed="false" aria-label="Keep strum"></button>
+      <button class="tool dice" data-roll="strum" aria-label="Roll a new strum"></button>
+    </div>
+    <div class="step chords" data-step="chords">
+      <span class="num">3</span>
+      <div class="step-txt"><b>Roll chords</b><span id="stepChords"></span></div>
+      <button class="tool lock" data-lock="chords" aria-pressed="false" aria-label="Keep chords"></button>
+      <button class="tool dice" data-roll="chords" aria-label="Roll new chords"></button>
+    </div>
+  </section>
+  <button class="roll-all" id="rollAll"><span data-icon="dice"></span><span id="rollLabel">Or roll all</span></button>
 
   <section class="card drums" id="drumCard">
     <div class="head">
       <div class="label"><i></i>Drums</div>
-      <div class="tools">
-        <button class="tool lock" data-lock="drum" aria-pressed="false" aria-label="Lock drums"></button>
-        <button class="tool dice" data-roll="drum" aria-label="Roll new drums"></button>
-      </div>
     </div>
     <div id="drumBody">
       <h2 class="name" id="drumName">…</h2>
@@ -335,14 +364,6 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
   <section class="card strum" id="strumCard">
     <div class="head">
       <div class="label"><i></i>Strum</div>
-      <div class="tools">
-        <button class="tool lock" data-lock="strum" aria-pressed="false" aria-label="Lock strum"></button>
-        <button class="tool dice" data-roll="strum" aria-label="Roll a new strum"></button>
-      </div>
-    </div>
-    <div id="strumEmpty" class="empty" hidden>
-      <p>Lock in a drum beat you like and a strum pattern that grooves with it rolls in here.</p>
-      <button class="big-roll" data-roll="strum"><span data-icon="dice"></span>Roll a strum now</button>
     </div>
     <div id="strumBody">
       <h2 class="name" id="strumName"></h2>
@@ -355,14 +376,6 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
   <section class="card chords" id="chordCard">
     <div class="head">
       <div class="label"><i></i>Chords<span id="chordKey"></span></div>
-      <div class="tools">
-        <button class="tool lock" data-lock="chords" aria-pressed="false" aria-label="Lock chords"></button>
-        <button class="tool dice" data-roll="chords" aria-label="Roll new chords"></button>
-      </div>
-    </div>
-    <div id="chordEmpty" class="empty" hidden>
-      <p>Lock in the strum and a chord progression rolls in here, with the fingerings. Until then the guitar strums an E.</p>
-      <button class="big-roll" data-roll="chords"><span data-icon="dice"></span>Roll chords now</button>
     </div>
     <div id="chordBody">
       <div class="tiles" id="tiles"></div>
@@ -4604,7 +4617,40 @@ function viewBar(bar, slots) {
   });
 }
 
-window.Strum = { ARCH, BY_ID, roll, build, compatible, gridsFor, feelOf, stringsFor, viewBar, toSaved, fromSaved, GRID, METER_BEATS };
+// ---------- adapting a kept strum to a new groove ----------
+// What a pattern feels like: how busy it is, how much rings vs. chokes vs. palm-mutes, how many upstrokes.
+const FEAT = ['ring', 'strum', 'short', 'pm', 'chuck', 'bass', 'pick', 'boogie', 'stop'];
+function features(st) {
+  const f = Object.fromEntries(FEAT.map(k => [k, 0])); let n = 0, ups = 0;
+  st.bars.forEach(b => b.ev.forEach(e => {
+    const k = e.art === 'chick' ? 'short' : e.art === 'alt' ? 'bass' : e.art;
+    if (k in f) f[k]++; n++; if (e.dir === 'U') ups++;
+  }));
+  FEAT.forEach(k => { f[k] /= Math.max(1, n); });
+  f.density = n / Math.max(1, (st.slots / st.per) * st.bars.length);
+  f.up = ups / Math.max(1, n);
+  f.voicing = st.voicing;
+  return f;
+}
+// The pattern for this groove that feels most like `old` (used when a kept strum can't fit a new beat)
+function closest(old, o) {
+  const fo = features(old);
+  const cands = candidates(o.tpl, o.bpm, o.swing || 0, o.tpl.style, null);
+  if (!cands.length) return roll(o);
+  const still = () => 0.999;   // build without random variations
+  const scored = cands.map(([a, w]) => {
+    const st = build(a, o, still), fb = features(st);
+    let d = FEAT.reduce((acc, k) => acc + Math.abs(fo[k] - fb[k]), 0);
+    d += 0.6 * Math.abs(Math.log((fb.density + 0.05) / (fo.density + 0.05)));
+    d += 0.3 * Math.abs(fo.up - fb.up) + (fo.voicing !== fb.voicing ? 0.35 : 0) + (a.id === old.id ? -1 : 0);
+    return { st, s: Math.exp(-d * 4) * Math.pow(w, 0.25) };
+  }).sort((x, y) => y.s - x.s).slice(0, 3);
+  let r = Math.random() * scored.reduce((a, x) => a + x.s, 0);
+  for (const x of scored) if ((r -= x.s) <= 0) return x.st;
+  return scored[0].st;
+}
+
+window.Strum = { closest, features, ARCH, BY_ID, roll, build, compatible, gridsFor, feelOf, stringsFor, viewBar, toSaved, fromSaved, GRID, METER_BEATS };
 })();
 
 </script>
@@ -5166,13 +5212,18 @@ function doRoll(layer, quiet) {
   const v = view();
   if (layer === 'drum') {
     const keepStrum = v.strum && S.locks.strum ? v.strum : null;
-    let d = rollDrum({ strum: keepStrum });
-    if (!d) { toast('No groove fits the locked strum in this style. Try another style.'); return; }
+    // a kept strum prefers a beat it already fits; if the style has none, any beat goes and the strum adapts
+    let d = rollDrum({ strum: keepStrum }) || rollDrum({});
     setLayer('drum', d);
-    // an unlocked strum that no longer fits the new feel gets a fresh one
-    if (v.strum && !S.locks.strum && !Strum.compatible(v.strum, tplOf(d), d.bpm, swingOf(d))) setLayer('strum', rollStrum({ drum: d }));
-    else if (v.strum && !S.locks.strum && Strum.METER_BEATS[d.meter] * v.strum.per !== v.strum.slots) setLayer('strum', rollStrum({ drum: d }));
-  } else if (layer === 'strum') {
+    if (v.strum) {
+      const tpl = tplOf(d);
+      const fits = Strum.compatible(v.strum, tpl, d.bpm, swingOf(d)) && Strum.METER_BEATS[d.meter] * v.strum.per === v.strum.slots;
+      if (!fits && S.locks.strum) {
+        const ns = adaptStrumTo(v.strum, d);
+        setLayer('strum', ns);
+        if (!quiet) toast(`The new beat is ${tpl.meter === v.strum.meter ? 'a different feel' : 'in ' + tpl.meter}, so the strum switched to ${ns.name}, the closest fit.`);
+      } else if (!fits) setLayer('strum', rollStrumFor(d));
+    }  } else if (layer === 'strum') {
     const d = v.drum;
     setLayer('strum', rollStrumFor(d));
   } else if (layer === 'chords') {
@@ -5180,6 +5231,11 @@ function doRoll(layer, quiet) {
   }
   save();
   if (!quiet) { renderAll(); flash(layer); }
+}
+function adaptStrumTo(old, d) {
+  const tpl = tplOf(d);
+  const bar = compileBar({ tpl, I: d.I, B: d.B, swing: swingOf(d, tpl), fills: 0, extras: false, seed: d.seed, bpm: d.bpm, time: d.time }, 0, false);
+  return Strum.closest(old, { tpl, bpm: d.bpm, swing: swingOf(d, tpl), kicks: bar.ev.filter(e => e.lane === 'K').map(e => e.t) });
 }
 function rollStrumFor(d) { const keep = S.drum; S.drum = d; try { return rollStrum({ drum: d }); } finally { S.drum = keep; } }
 
@@ -5206,10 +5262,11 @@ function doChangeUp(bar) {
   if (!cand.length) return null;
   const pick = weighted(Math.random, cand);
   if (pick === 'drum') {
-    const d = rollDrum({ bpm: S.drum.bpm, meter: S.drum.meter, styleId: Math.random() < 0.6 ? S.drum.styleId : undefined, strum: S.strum && S.locks.strum ? S.strum : null });
+    const d = rollDrum({ bpm: S.drum.bpm, meter: S.drum.meter, styleId: Math.random() < 0.6 ? S.drum.styleId : undefined, strum: S.strum && S.locks.strum ? S.strum : null })
+      || rollDrum({ bpm: S.drum.bpm, meter: S.drum.meter });
     if (!d) return null;
     S.drum = d; org.drum = bar;
-    if (S.strum && !S.locks.strum && !Strum.compatible(S.strum, tplOf(d), d.bpm, swingOf(d))) { S.strum = rollStrum(); org.strum = bar; }
+    if (S.strum && !Strum.compatible(S.strum, tplOf(d), d.bpm, swingOf(d))) { S.strum = S.locks.strum ? adaptStrumTo(S.strum, d) : rollStrum(); org.strum = bar; }
     applyMix();
     return 'Change-up: new drum groove';
   }
@@ -5305,9 +5362,7 @@ function renderDrum() {
 }
 function renderStrum() {
   const st = view().strum;
-  $('strumEmpty').hidden = !!st; $('strumBody').hidden = !st;
-  $('strumCard').classList.toggle('waiting', !st);
-  $('strumCard').querySelectorAll('.head .tool').forEach(b => { b.hidden = !st; });
+  $('strumCard').hidden = !st;
   if (!st) return;
   $('strumName').textContent = st.name;
   $('strumTip').textContent = st.tip;
@@ -5317,10 +5372,8 @@ const barsTxt = b => (b === 0.5 ? '½ bar' : b === 1 ? '1 bar' : `${b} bars`);
 const SEC_WORD = { Verse: 'Verse', Chorus: 'Chorus', Bridge: 'Bridge', 'Pre-chorus': 'Pre-chorus', Intro: 'Intro riff', Vamp: 'Vamp', Blues: 'Blues', Turnaround: 'Turnaround' };
 function renderChords() {
   const p = view().prog;
-  $('chordEmpty').hidden = !!p; $('chordBody').hidden = !p;
-  $('chordCard').classList.toggle('waiting', !p);
-  $('chordCard').querySelectorAll('.head .tool').forEach(b => { b.hidden = !p; });
-  if (!p) { $('chordKey').textContent = ''; return; }
+  $('chordCard').hidden = !p;
+  if (!p) return;
   $('chordKey').textContent = `Key of ${Prog.keyShort(p.key)} · ${p.form || SEC_WORD[p.sec] || 'Verse'}`;
   const big = p.seq.length > 6;
   $('form').hidden = !big;
@@ -5343,12 +5396,21 @@ function renderChal() {
 }
 function lockedCount() { return ['drum', 'strum', 'chords'].filter(k => S.locks[k]).length; }
 function renderTools() {
+  const v = view();
+  const has = { drum: true, strum: !!v.strum, chords: !!v.prog };
+  const CARD = { drum: 'drumCard', strum: 'strumCard', chords: 'chordCard' };
   document.querySelectorAll('[data-lock]').forEach(b => {
-    const k = b.dataset.lock, on = !!S.locks[k];
+    const k = b.dataset.lock, on = !!S.locks[k] && has[k];
     b.setAttribute('aria-pressed', String(on)); b.innerHTML = on ? I.lock : I.unlock;
-    b.setAttribute('aria-label', (on ? 'Unlock ' : 'Lock ') + (k === 'drum' ? 'drums' : k));
-    b.closest('.card').classList.toggle('locked', on);
+    b.setAttribute('aria-label', (on ? 'Stop keeping ' : 'Keep ') + (k === 'drum' ? 'the drums' : k === 'strum' ? 'the strum' : 'the chords'));
+    b.hidden = !has[k];
+    $(CARD[k]).classList.toggle('locked', on);
+    const row = b.closest('.step'); row.classList.toggle('kept', on); row.classList.toggle('empty-step', !has[k]);
   });
+  const d = v.drum, tpl = tplOf(d);
+  $('stepDrum').textContent = `${tpl.name} · ${d.bpm} BPM`;
+  $('stepStrum').textContent = v.strum ? v.strum.name : 'Not rolled yet';
+  $('stepChords').textContent = v.prog ? `Key of ${Prog.keyShort(v.prog.key)} · ${v.prog.sig.split(' ').filter((c, i, a) => c !== a[i - 1]).slice(0, 5).join(' ')}` : 'Not rolled yet';
   for (const [k, id, txt] of [['drum', 'volD', 'Drums'], ['gtr', 'volG', 'Guitar']]) {
     const on = !!S.mute[k], b = document.querySelector(`[data-mute="${k}"]`);
     b.setAttribute('aria-pressed', String(on)); b.innerHTML = on ? I.spkOff : I.spk;
@@ -5358,7 +5420,7 @@ function renderTools() {
     $(id + 'Txt').textContent = on ? 'Muted' : Math.round(S[id] * 100) + '%';
   }
   const n = lockedCount();
-  $('rollLabel').innerHTML = n === 3 ? 'All locked' : n ? `Roll all <small>· ${n} locked</small>` : 'Roll all';
+  $('rollLabel').innerHTML = n === 3 ? 'All kept' : n ? `Or roll all <small>· ${n} kept</small>` : 'Or roll all';
   $('rollAll').classList.toggle('off', n === 3);
 }
 function renderAll() {
@@ -5368,8 +5430,7 @@ function renderAll() {
 function flash(layer) {
   const id = layer === 'drum' ? 'drumBody' : layer === 'strum' ? 'strumBody' : 'chordBody';
   const el = $(id); el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
-  const card = layer === 'drum' ? 'drumCard' : layer === 'strum' ? 'strumCard' : 'chordCard';
-  const dice = $(card).querySelector('.tool.dice'); if (dice) { dice.classList.remove('spin'); void dice.offsetWidth; dice.classList.add('spin'); }
+  const dice = document.querySelector(`.step[data-step="${layer}"] .tool.dice`); if (dice) { dice.classList.remove('spin'); void dice.offsetWidth; dice.classList.add('spin'); }
 }
 
 // transport readouts + playhead
@@ -5603,8 +5664,8 @@ document.addEventListener('click', e => {
   if (t.dataset.lock) {
     const k = t.dataset.lock; S.locks[k] = !S.locks[k]; save(); renderTools();
     // build up step by step: locking the drums brings in a strum, locking the strum brings in chords
-    if (S.locks[k] && k === 'drum' && !view().strum) { doRoll('strum'); toast('Drums locked. Roll strums until one fits, then lock it.'); setTimeout(() => $('strumCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80); }
-    else if (S.locks[k] && k === 'strum' && !view().prog) { doRoll('chords'); toast('Strum locked. Now roll chords until you like them.'); setTimeout(() => $('chordCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80); }
+    if (S.locks[k] && k === 'drum' && !view().strum) { doRoll('strum'); toast('Drums kept. Here’s a strum: roll until one fits, then keep it.'); }
+    else if (S.locks[k] && k === 'strum' && !view().prog) { doRoll('chords'); toast('Strum kept. Here are some chords: roll until you like them.'); }
     return;
   }
   if (t.dataset.mute) {
@@ -5653,7 +5714,7 @@ $('resetBtn').addEventListener('click', () => {
   setLayer('strum', null); setLayer('prog', null);
   S.locks = { ...S.locks, drum: false, strum: false, chords: false };
   save(); hideSheet(); renderAll(); window.scrollTo({ top: 0, behavior: 'smooth' });
-  toast('Starting over. Roll drums until you like them, then lock them.');
+  toast('Starting over. Roll drums until you like them, then keep them.');
 });
 document.addEventListener('keydown', e => {
   if (openSheet || e.target.closest('input')) return;
@@ -5673,7 +5734,7 @@ function boot() {
   renderAll();
   setPlay();
   if (jam) setTimeout(() => toast('Shared jam loaded and locked. Press play.'), 400);
-  else if (fresh) setTimeout(() => toast('Roll drums until you like them, then lock them.'), 600);
+  else if (fresh) setTimeout(() => toast('Roll drums until you like them, then tap the lock to keep them.'), 600);
   loadAudio().catch(err => { console.error(err); toast('Could not load the sounds on this browser.'); });
   window.__jam = { S, sched, view, rollAll, doRoll, serialize, deserialize, org, chordAt, guitarBar, get ctx() { return ctx; }, get guitar() { return guitar; }, get mixer() { return mixer; }, get buses() { return { master, drumBus, gtrBus }; }, renderAll, start, stop, setLayer, rollStrum, rollProg, rollDrum, tplNow };
 }

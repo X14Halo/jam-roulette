@@ -210,12 +210,34 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 
 /* challenges */
 .chal-list { list-style: none; margin: 4px 0 0; padding: 0; }
-.chal-list li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 0.5px solid var(--line); }
+.chal-list li { padding: 12px 0 10px; border-top: 0.5px solid var(--line); }
 .chal-list li:first-child { border-top: 0; }
+.chal-row { display: flex; align-items: center; gap: 12px; }
 .chal-txt { flex: 1; min-width: 0; }
 .chal-txt b { display: block; font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
-.chal-txt span { display: block; font-size: 16px; font-weight: 600; line-height: 1.3; margin-top: 1px; }
-.chal-list .tool { width: 38px; height: 38px; background: var(--fill); color: var(--modes); }
+.chal-txt span { display: block; font-size: 17px; font-weight: 600; line-height: 1.3; margin-top: 2px; }
+.chal-list .tool { width: 38px; height: 38px; background: var(--fill); color: var(--modes); flex: none; }
+.more { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; min-height: 30px; font-size: 14px; font-weight: 600; color: var(--modes); }
+.more svg { width: 15px; height: 15px; transition: transform .2s; }
+.open .more svg { transform: rotate(180deg); }
+.how { margin-top: 6px; padding: 12px 14px; border-radius: 14px; background: var(--card-2); font-size: 15px; line-height: 1.45; color: var(--ink); animation: fresh .3s ease; }
+.how p { margin: 0 0 8px; }
+.how p:last-child { margin-bottom: 0; }
+.how .soft { color: var(--ink-2); font-size: 14px; }
+.how .seq { font-weight: 500; }
+.how .list { margin: 0 0 8px; padding-left: 18px; }
+.how .list li { padding: 2px 0; border: 0; }
+.beats { display: flex; gap: 6px; margin: 4px 0 8px; flex-wrap: wrap; }
+.beats span { min-width: 30px; height: 30px; padding: 0 6px; border-radius: 8px; display: grid; place-items: center; background: var(--fill); font-weight: 700; color: var(--ink-3); }
+.beats span.on { background: var(--modes); color: #fff; }
+.mtiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 8px; margin: 6px 0 8px; }
+.mtile { --c: var(--modes); background: var(--card); border-radius: 12px; padding: 7px 5px 6px; text-align: center; --gd-dot: var(--ink); --gd-num: var(--card); --gd-hl: var(--modes); color: var(--ink); }
+.mtile b { display: block; font-size: 15px; font-weight: 700; }
+.mtile .gd { width: 100%; height: auto; display: block; }
+.mtile .bb { width: 100%; height: auto; display: block; margin-top: 4px; color: var(--ink); }
+.mtile small { display: block; font-size: 11.5px; font-weight: 600; color: var(--ink-3); margin-top: 1px; line-height: 1.25; }
+.mtile.bass { grid-column: span 2; }
+.mtile.bass .bb { max-width: 220px; margin: 4px auto 0; }
 
 /* ---------- transport ---------- */
 .bar {
@@ -3955,7 +3977,7 @@ function roll(o) {
   };
 }
 const PROGS = parseLib(PROG_LIB);
-window.Prog = { roll, PROGS, parseRN, keyShort: T.keyShort, keyName: T.keyName, chordName: T.chordName, shapeOf: c => c.shape || Guitar.voicing(c) };
+window.Prog = { roll, PROGS, parseRN, powerShape, voice, gripShape, keyShort: T.keyShort, keyName: T.keyName, chordName: T.chordName, shapeOf: c => c.shape || Guitar.voicing(c) };
 
 })();
 
@@ -4833,6 +4855,185 @@ function createGuitar(ctx, destination) {
 
 </script>
 <script>
+// ===== Jam Roulette challenges =====
+// One rule per player. Each has a "Show me how" panel built from what's on screen right now
+// (the rolled chords, key, drum groove and strum), with chord shapes and bass positions where they help.
+(() => {
+'use strict';
+const T = window.Changes.theory;
+const mod = (n, m = 12) => ((n % m) + m) % m;
+const nm = (pc, acc) => T.noteName(pc, acc || '#');
+const cname = c => T.chordName(c);
+const esc = s => String(s).replace(/[&<>]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[ch]));
+const STR = ['low E', 'A', 'D', 'G', 'B', 'high E'];
+const OPEN = [40, 45, 50, 55, 59, 64];
+
+// ---------- little drawings ----------
+function fingersFor(frets) {
+  const order = frets.map((f, i) => ({ f, i })).filter(x => x.f > 0).sort((a, b) => a.f - b.f || a.i - b.i);
+  const fingers = frets.map(() => 0); let n = 1;
+  for (const x of order) fingers[x.i] = Math.min(4, n++);
+  return fingers;
+}
+const shapeOf = frets => window.Prog.gripShape(frets, fingersFor(frets), null);
+function tile(label, shape, sub, hl) {
+  return `<div class="mtile"><b>${esc(label)}</b>${Guitar.diagram(shape, { fingers: true, hl: hl || new Set() })}${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
+}
+const tiles = arr => `<div class="mtiles">${arr.join('')}</div>`;
+
+// a 4-string bass neck: G on top, low E at the bottom, a few frets around the notes
+function bassBoard(label, notes, sub) {
+  const frets = notes.map(n => n.fret);
+  const lo = Math.max(0, Math.min(...frets) - (Math.min(...frets) > 0 ? 1 : 0)), n = 5;
+  const W = 124, H = 70, L = 14, top = 12, gap = 12, fw = (W - L - 6) / n;
+  const y = s => top + (3 - s) * gap;                 // s: 0=E,1=A,2=D,3=G
+  const x = f => (f === 0 ? L - 6 : L + (f - lo - 0.5) * fw + (lo === 0 ? 0 : fw * 0));
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="bb" aria-hidden="true">`;
+  for (let s = 0; s < 4; s++) svg += `<line x1="${L}" x2="${W - 6}" y1="${y(s)}" y2="${y(s)}" stroke="currentColor" stroke-opacity=".35" stroke-width="${1 + (3 - s) * 0.35}"/>`;
+  for (let k = 0; k <= n; k++) svg += `<line x1="${L + k * fw}" x2="${L + k * fw}" y1="${top - 3}" y2="${y(0) + 3}" stroke="currentColor" stroke-opacity="${k === 0 && lo === 0 ? 0.9 : 0.2}" stroke-width="${k === 0 && lo === 0 ? 3 : 1}"/>`;
+  if (lo > 0) svg += `<text x="${L + fw * 0.5}" y="${H - 4}" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" opacity=".6">${lo + 1}</text>`;
+  ['E', 'A', 'D', 'G'].forEach((t, s) => { svg += `<text x="2" y="${y(s) + 3.5}" font-size="8.5" font-weight="700" fill="currentColor" opacity=".5">${t}</text>`; });
+  for (const nt of notes) {
+    const cx = nt.fret === 0 ? L - 4 : L + (nt.fret - lo - 0.5) * fw, cy = y(nt.s);
+    const fill = nt.kind === 'root' ? 'var(--c)' : 'none';
+    svg += `<circle cx="${cx}" cy="${cy}" r="5" fill="${fill}" stroke="var(--c)" stroke-width="1.8"/>`;
+    if (nt.tag) svg += `<text x="${cx}" y="${cy + 3}" text-anchor="middle" font-size="7" font-weight="800" fill="${nt.kind === 'root' ? '#fff' : 'var(--c)'}">${nt.tag}</text>`;
+  }
+  return `<div class="mtile bass"><b>${esc(label)}</b>${svg + '</svg>'}${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
+}
+// where a bass player finds a note low on the neck: low E string up to fret 4, otherwise the A string
+function bassSpot(pc) {
+  const e = mod(pc - 4), a = mod(pc - 9);
+  return e <= 4 ? { s: 0, fret: e } : { s: 1, fret: a };
+}
+const spotTxt = sp => `${['E', 'A', 'D', 'G'][sp.s]} string, ${sp.fret === 0 ? 'open' : 'fret ' + sp.fret}`;
+
+// ---------- chord helpers ----------
+const uniqRoots = ctx => ctx.chords;
+const majorish = c => /^(maj|7|maj7|6|9|add9|69|sus2|sus4|5|13|maj9)$/.test(c.q);
+function doubleStop(c) {          // two notes of the chord on the G and B strings, low on the neck
+  const pcs = new Set(T.chordPcs(c).slice(0, 3));
+  let best = null;
+  for (let g = 0; g <= 9; g++) for (let b = Math.max(0, g - 2); b <= g + 3; b++) {
+    const pg = mod(OPEN[3] + g), pb = mod(OPEN[4] + b);
+    if (!pcs.has(pg) || !pcs.has(pb) || pg === pb) continue;
+    const score = Math.max(g, b) + (pg === c.root || pb === c.root ? -1.5 : 0) + Math.abs(g - b) * 0.4;
+    if (!best || score < best.score) best = { g, b, score };
+  }
+  return best ? [-1, -1, -1, best.g, best.b, -1] : null;
+}
+function easiest(c) {
+  const ei = Guitar.easyIndex(c);
+  if (ei >= 0) return Guitar.voicings(c)[ei];
+  return c.shape || Guitar.voicing(c);
+}
+function susShape(c) {
+  const sc = { root: c.root, acc: c.acc, q: 'sus4', bass: null, bassAcc: c.acc };
+  return { c: sc, v: easiest(sc) };
+}
+function hammerSpot(shape) {      // a finger on the D, G or B string that can lift off and hammer back on
+  let best = -1;
+  for (const s of [2, 3, 4]) if (shape.frets[s] >= 1 && shape.frets[s] <= 4 && (best < 0 || shape.frets[s] >= shape.frets[best])) best = s;
+  return best;
+}
+function scaleBelow(key, targetPc, n) {   // the n scale notes leading up to targetPc
+  const iv = key.mode === 'major' ? [0, 2, 4, 5, 7, 9, 11] : [0, 2, 3, 5, 7, 8, 10];
+  const pcs = iv.map(i => mod(key.tonic + i));
+  const out = []; let p = targetPc;
+  for (let k = 0; k < 11 && out.length < n; k++) { p = mod(p - 1); if (pcs.includes(p)) out.unshift(p); }
+  return out;
+}
+const needChords = ctx => (ctx.hasChords ? '' : '<p class="soft">Roll chords to see these for your progression. For now this uses an E chord.</p>');
+const seqTxt = ctx => ctx.seq.map(s => cname(s.c)).join(' → ');
+
+// ---------- the challenges ----------
+// guitar: beginner friendly
+const GUITAR = [
+  { id: 'g-down', t: 'Downstrokes only', how: () => `<p>Every strum goes down, even where the pattern shows an up. Keep your wrist loose and just let your hand float back up without touching the strings.</p><p class="soft">Why: it locks you to the beat and sounds punchier. Lots of punk and classic rock is played this way.</p>` },
+  { id: 'g-24', t: 'Strum only on beats 2 and 4', how: ctx => `<p>Count <b>1 2 3 4</b> out loud with the drummer and only strum on <b>2</b> and <b>4</b>, right with the snare. Keep each strum short: relax your fretting hand right after so it stops.</p><div class="beats"><span>1</span><span class="on">2</span><span>3</span><span class="on">4</span></div>${ctx.meter !== '4/4' ? `<p class="soft">This groove is in ${ctx.meter}, so strum on the beats where the snare hits.</p>` : ''}` },
+  { id: 'g-ring', t: 'One strum per chord, let it ring', how: ctx => `<p>Strum once each time the chord changes, then let it ring until the next change. Use the quiet time to get your fingers ready.</p><p class="seq">${esc(ctx.seq.map(s => `${cname(s.c)} (${s.bars === 1 ? '1 bar' : s.bars + ' bars'})`).join(' → '))}</p>${needChords(ctx)}` },
+  { id: 'g-top3', t: 'Strum only the top three strings', how: ctx => `<p>Aim your strum at the three thinnest strings (G, B and high E) and skip the rest. It sounds lighter and leaves room for the bass. Just fret the top part of each shape.</p>${tiles(uniqRoots(ctx).map(c => { const f = (c.shape || Guitar.voicing(c)).frets.map((x, i) => (i < 3 ? -1 : x)); return tile(cname(c), shapeOf(f)); }))}${needChords(ctx)}` },
+  { id: 'g-power', t: 'Power chords only', how: ctx => `<p>Swap every chord for its power chord: two or three strings, with the root on the low E or A string. Mute the other strings by letting your fingers lightly touch them.</p>${tiles(uniqRoots(ctx).map(c => tile(nm(c.root, c.acc) + '5', window.Prog.powerShape(c.root), 'root on ' + (window.Prog.powerShape(c.root).frets[0] >= 0 ? 'low E' : 'A'))))}${needChords(ctx)}` },
+  { id: 'g-pm', t: 'Palm-mute for 4 bars, then open up for 4', how: () => `<p>Rest the edge of your strumming hand lightly on the strings right where they meet the bridge. Strum and you'll hear a tight, chunky sound. After 4 bars, lift your hand and let the chords ring out.</p><p class="soft">Tip: too much pressure and the notes die completely; too little and they ring. Slide your hand back and forth to find the spot.</p>` },
+  { id: 'g-double', t: 'Double stops: just two strings', how: ctx => `<p>Instead of full chords, play just two notes from each chord on the <b>G</b> and <b>B</b> strings. Pick or strum only those two strings. It's how players like Keith Richards and Chuck Berry fill out a song.</p>${tiles(uniqRoots(ctx).map(c => { const f = doubleStop(c); return f ? tile(cname(c), shapeOf(f), 'G + B strings') : ''; }))}${needChords(ctx)}` },
+  { id: 'g-bass', t: 'Pick the bass note, then strum', how: ctx => `<p>On each chord, pick just the lowest note of the chord first, then strum the rest. It's the country "boom-chick" sound.</p><ul class="list">${uniqRoots(ctx).map(c => { const sh = c.shape || Guitar.voicing(c); const s = sh.frets.findIndex(f => f >= 0); return `<li><b>${esc(cname(c))}</b>: pick the ${STR[s]} string${sh.frets[s] ? ', fret ' + sh.frets[s] : ' (open)'}</li>`; }).join('')}</ul>${needChords(ctx)}` },
+  { id: 'g-chuck', t: 'Add a muted scratch before each chord change', how: () => `<p>Just before you change chords, relax your fretting hand so the strings go dead and strum once: <b>chk</b>. It buys you time to move your fingers and sounds like a pro doing it on purpose.</p>` },
+  { id: 'g-dyn', t: 'Quiet for 4 bars, loud for 4 bars', how: () => `<p>Play the same pattern, but strum softly for 4 bars (just brush the strings), then dig in hard for 4 bars. Keep the tempo steady when you get loud: it's easy to rush.</p>` },
+  { id: 'g-sus', t: 'Add a sus4 before each chord', how: ctx => `<p>For the last beat before each chord, play its <b>sus4</b> version, then drop into the normal chord. It makes the change sound like it's leaning in.</p>${tiles(uniqRoots(ctx).filter(majorish).slice(0, 5).map(c => { const s = susShape(c); return tile(cname(s.c), s.v); }))}${uniqRoots(ctx).some(c => !majorish(c)) ? '<p class="soft">Minor chords can use the same sus4 shape too.</p>' : ''}${needChords(ctx)}` },
+  { id: 'g-easy', t: 'Use the easiest shape for every chord', how: ctx => `<p>Play every chord with the simplest shape you can. Focus on clean changes and a steady strum instead of fancy shapes.</p>${tiles(uniqRoots(ctx).map(c => tile(cname(c), easiest(c))))}${needChords(ctx)}` },
+  { id: 'g-half', t: 'Play half as many strums', how: () => `<p>Take the strum pattern and leave out every other strum. Keep your arm moving in time, just miss the strings. Space is part of the groove.</p>` },
+  { id: 'g-skip1', t: 'Leave beat 1 empty every other bar', how: () => `<p>On every second bar, don't strum on beat 1: come in on the "&" or on beat 2 instead. The bass and kick drum still land on 1, so it feels like a little push.</p>` },
+  { id: 'g-push', t: 'Change chords early, on the "&" of 4', how: () => `<p>Count <b>1 & 2 & 3 & 4 &</b>. Switch to the next chord on that last "&", a half beat early, and let it ring over the bar line. It's called a push and makes the song feel like it's driving forward.</p>` },
+  { id: 'g-hammer', t: 'Add a hammer-on to each chord', how: ctx => `<p>Strum the chord with one finger lifted, then quickly press it back down so the note sounds again: that's a hammer-on. The highlighted note on each shape is an easy one to try.</p>${tiles(uniqRoots(ctx).map(c => { const sh = easiest(c); const s = hammerSpot(sh); return s >= 0 ? tile(cname(c), sh, 'lift the ' + STR[s] + ' finger', new Set([s])) : ''; }))}${needChords(ctx)}` },
+  { id: 'g-sing', t: 'Sing or hum anything over the chords', how: () => `<p>Keep the strum going and sing or hum any melody on top, even "la la la". Keeping your strumming hand steady while you sing is the real skill, and it's how songs get written.</p>` },
+  { id: 'g-eyes', t: 'Watch the drummer, not your hands, for 8 bars', how: () => `<p>Look up at the drummer and feel the groove instead of watching your fingers. If you miss a chord, just keep strumming in time: the rhythm matters more than the notes.</p>` },
+  { id: 'g-tempo', t: 'Count out loud while you play', how: () => `<p>Say "1 2 3 4" out loud (or in your head) the whole time. It keeps you locked in with the drums and makes chord changes land on time.</p>` },
+];
+
+const BASS = [
+  { id: 'b-roots', t: 'Roots only, one note per chord', how: ctx => `<p>Play just the root of each chord, once, and let it ring for as long as the chord lasts.</p>${tiles(uniqRoots(ctx).map(c => { const sp = bassSpot(c.root); return bassBoard(cname(c), [{ ...sp, kind: 'root', tag: 'R' }], spotTxt(sp)); }))}${needChords(ctx)}` },
+  { id: 'b-r5', t: 'Roots and fifths only', how: ctx => `<p>Alternate between the root and the fifth of each chord. The fifth is one string higher, two frets up.</p>${tiles(uniqRoots(ctx).map(c => { const sp = bassSpot(c.root); return bassBoard(cname(c), [{ ...sp, kind: 'root', tag: 'R' }, { s: sp.s + 1, fret: sp.fret + 2, kind: 'fifth', tag: '5' }], `${nm(c.root, c.acc)} and ${nm(c.root + 7, c.acc)}`); }))}${needChords(ctx)}` },
+  { id: 'b-kick', t: 'Lock to the kick drum, note for note', how: ctx => `<p>Play a note every time the kick drum hits, and only then. Use the root of the chord.</p><p class="seq">Kick in this groove: <b>${esc(ctx.kicks.join('  ·  ') || '1  ·  3')}</b></p><p class="soft">Ask the drummer to play just kick for a bar so you can hear it.</p>` },
+  { id: 'b-walk', t: 'Walk up into every chord change', how: ctx => {
+    if (ctx.seq.length < 2) return `<p>Play two notes that climb up to the next chord's root on the last two beats of each chord.</p>${needChords(ctx)}`;
+    const rows = ctx.seq.map((s, i) => { const nx = ctx.seq[(i + 1) % ctx.seq.length].c; if (nx.root === s.c.root) return ''; const w = scaleBelow(ctx.key, nx.root, 2); return `<li><b>${esc(cname(s.c))} → ${esc(cname(nx))}</b>: ${w.map(p => nm(p, nx.acc)).join(', ')}, then <b>${nm(nx.root, nx.acc)}</b></li>`; }).filter(Boolean);
+    return `<p>On the last two beats before each chord change, climb up the scale to the next root.</p><ul class="list">${rows.join('')}</ul>${needChords(ctx)}`; } },
+  { id: 'b-oct', t: 'Octaves the whole time', how: ctx => `<p>Bounce between the root and the same note an octave up: two strings higher, two frets up. Eighth notes, low-high-low-high. Disco and funk love this.</p>${tiles(uniqRoots(ctx).map(c => { const sp = bassSpot(c.root); return bassBoard(cname(c), [{ ...sp, kind: 'root', tag: 'R' }, { s: sp.s + 2, fret: sp.fret + 2, kind: 'oct', tag: '8' }]); }))}${needChords(ctx)}` },
+  { id: 'b-high', t: 'Stay above the 5th fret', how: ctx => `<p>Play everything higher up the neck. Find each root on the A or D string past the 5th fret.</p><ul class="list">${uniqRoots(ctx).map(c => { let a = mod(c.root - 9); if (a < 5) a += 12; let d = mod(c.root - 2); if (d < 5) d += 12; return `<li><b>${esc(cname(c))}</b>: A string fret ${a}, or D string fret ${d}</li>`; }).join('')}</ul>${needChords(ctx)}` },
+  { id: 'b-off', t: 'Play only on the offbeats', how: () => `<p>Count <b>1 & 2 & 3 & 4 &</b> and only play on the "&"s. Leave the beats to the kick drum. It's the bounce behind reggae and disco.</p><div class="beats"><span>1</span><span class="on">&amp;</span><span>2</span><span class="on">&amp;</span><span>3</span><span class="on">&amp;</span><span>4</span><span class="on">&amp;</span></div>` },
+  { id: 'b-arp', t: 'Root, third, fifth on every chord', how: ctx => `<p>Play the three notes of each chord in order, going up: root, third, fifth.</p><ul class="list">${uniqRoots(ctx).map(c => `<li><b>${esc(cname(c))}</b>: ${T.chordPcs(c).slice(0, 3).map(p => nm(p, c.acc)).join(' – ')}</li>`).join('')}</ul>${needChords(ctx)}` },
+  { id: 'b-copy', t: 'Copy the guitar’s strum rhythm', how: ctx => `<p>Play roots in exactly the same rhythm as the guitar's strum pattern${ctx.strumName ? ` (${esc(ctx.strumName)})` : ''}. Locking together like this sounds huge.</p>${ctx.accents.length ? `<p class="seq">Strong strums land on: <b>${esc(ctx.accents.join('  ·  '))}</b></p>` : ''}` },
+  { id: 'b-pass', t: 'One passing note per bar, no more', how: () => `<p>Mostly play roots, but each bar you get exactly one extra note to lead somewhere. Make it count: a note right before the next chord sounds best.</p>` },
+  { id: 'b-pedal', t: 'Hold the key’s root under every chord', how: ctx => { const sp = bassSpot(ctx.key.tonic); return `<p>Stay on one note, the home note of the key, no matter what the chords do. It's called a pedal and builds tension.</p>${tiles([bassBoard(nm(ctx.key.tonic, ctx.chords[0] && ctx.chords[0].acc), [{ ...sp, kind: 'root', tag: 'R' }], spotTxt(sp))])}`; } },
+  { id: 'b-third', t: 'Start each chord on its third', how: ctx => `<p>Instead of the root, play the chord's third on beat 1, then the root after. It sounds smoother and more melodic.</p><ul class="list">${uniqRoots(ctx).map(c => `<li><b>${esc(cname(c))}</b>: start on ${nm(T.chordPcs(c)[1], c.acc)}, then ${nm(c.root, c.acc)}</li>`).join('')}</ul>${needChords(ctx)}` },
+  { id: 'b-slide', t: 'Slide into every root from two frets below', how: () => `<p>Put your finger two frets below the root, pluck, and slide up into it as the chord changes. A classic, easy way to sound smooth.</p>` },
+  { id: 'b-rest1', t: 'Rest on beat 1, come in on beat 2', how: () => `<p>Leave the first beat of every bar empty and start your line on beat 2. It's surprisingly hard and makes everyone listen.</p>` },
+];
+
+const DRUMS = [
+  { id: 'd-nohat', t: 'No hi-hat: ride or toms only', how: () => `<p>Keep the same groove but move your right hand to the ride cymbal or the floor tom. Same rhythm, different color.</p>` },
+  { id: 'd-k13', t: 'Kick only on 1 and 3', how: () => `<p>Strip the kick down to beats 1 and 3, nothing else. Leave the space for the bass player.</p>` },
+  { id: 'd-half', t: 'Half-time feel', how: () => `<p>Move the snare to beat 3 only, so the groove feels half as fast while the band plays at the same tempo.</p><div class="beats"><span>1</span><span>2</span><span class="on">3</span><span>4</span></div>` },
+  { id: 'd-ghost', t: 'Ghost notes between every backbeat', how: () => `<p>Add very quiet snare taps on the "e" and "a" around your backbeats. They should be felt more than heard.</p>` },
+  { id: 'd-xstick', t: 'Cross-stick instead of snare', how: () => `<p>Lay the stick across the snare and click the rim on 2 and 4. Perfect for quiet sections and ballads.</p>` },
+  { id: 'd-fill8', t: 'One fill every 8 bars, maximum', how: () => `<p>Hold the groove for 8 bars with no fills, then one short fill into bar 9. Less is more.</p>` },
+  { id: 'd-quiet', t: 'Whisper quiet: barely touch the drums', how: () => `<p>Play the groove as softly as you can while keeping it steady. Great practice for control.</p>` },
+  { id: 'd-floor', t: 'Groove on the floor tom instead of the hats', how: () => `<p>Play your hi-hat rhythm on the floor tom. It turns any beat into a tribal, rumbling groove.</p>` },
+  { id: 'd-nocym', t: 'No cymbals at all', how: () => `<p>Only kick, snare and toms. Keep time with the floor tom or snare.</p>` },
+  { id: 'd-build', t: 'Build up for 8 bars, then strip it back', how: () => `<p>Start with just kick and hi-hat, add the snare, then the full groove and fills over 8 bars. Then drop back to almost nothing.</p>` },
+  { id: 'd-acc', t: 'Copy the strum’s accents with the kick', how: ctx => `<p>Put a kick on every strong strum in the guitar pattern.</p>${ctx.accents.length ? `<p class="seq">Strong strums: <b>${esc(ctx.accents.join('  ·  '))}</b></p>` : '<p class="soft">Roll a strum first to see where its accents land.</p>'}` },
+  { id: 'd-4floor', t: 'Four on the floor', how: () => `<p>Kick on every beat, 1 2 3 4, snare on 2 and 4, open hi-hat on the "&"s. Instant dance groove.</p>` },
+  { id: 'd-bell', t: 'Ride bell on every beat', how: () => `<p>Hit the bell of the ride on every beat instead of the hi-hat. It cuts through and drives the band.</p>` },
+  { id: 'd-hats8', t: 'Hi-hat on the offbeats only', how: () => `<p>Play the hi-hat only on the "&"s (1 & 2 & 3 & 4 &), leaving the beats empty. It makes the groove bounce.</p>` },
+  { id: 'd-double', t: 'Double-time feel on the hats', how: () => `<p>Keep the kick and snare where they are but play the hi-hat twice as fast. The song sounds more urgent without speeding up.</p>` },
+  { id: 'd-snare3', t: 'Snare only on beat 3', how: () => `<p>Drop the 2 and 4 backbeat and hit the snare on 3 only. It's the reggae one-drop and half-time rock feel.</p>` },
+];
+
+const BAND = [
+  { id: 'x-build', t: 'Start whisper quiet and build to loud over 16 bars', how: () => `<p>Everyone starts as quietly as possible and gets a little louder every bar. Watch each other so you arrive at full volume together.</p>` },
+  { id: 'x-stop', t: 'Stop together on beat 1 every 8 bars, then come back in', how: () => `<p>Every 8th bar, everyone hits beat 1 together and stops. Count the rest of the bar silently and come back in on the next 1.</p>` },
+  { id: 'x-spot', t: 'Trade the spotlight: each player leads for 4 bars', how: () => `<p>Take turns being the loudest, busiest player for 4 bars while the others play simpler and quieter.</p>` },
+  { id: 'x-half', t: 'Everyone plays half as many notes', how: () => `<p>Take what you're playing and leave out half. Listen to how much bigger the space makes it sound.</p>` },
+  { id: 'x-push', t: 'Hit the "&" of 4 together every 4 bars', how: () => `<p>On the last half-beat of every 4th bar, everyone hits together, a push into the next bar. Count it: 1 & 2 & 3 & 4 <b>&</b>.</p>` },
+  { id: 'x-drop', t: 'One player drops out every 8 bars, in turn', how: () => `<p>Guitar sits out for 8 bars, then bass, then drums. Hear what each part adds.</p>` },
+  { id: 'x-2min', t: 'Play for two minutes without stopping', how: () => `<p>No matter what goes wrong, keep going. Mistakes are fine; stopping is the only way to fail.</p>` },
+  { id: 'x-ballad', t: 'Make it sound like a ballad', how: () => `<p>Same chords, but softer, slower feel and longer notes. Drums on cross-stick, bass on whole notes, guitar letting chords ring.</p>` },
+  { id: 'x-end', t: 'End together on a cue from the drummer', how: () => `<p>The drummer decides when to end: a nod and a big fill, then everyone hits the first chord together and lets it ring.</p>` },
+  { id: 'x-riff', t: 'Find a riff everyone can play in unison', how: ctx => `<p>Make up a short riff using the root notes of the chords and have guitar and bass play it together while the drums hit the same rhythm.</p><p class="seq">${esc(seqTxt(ctx))}</p>` },
+  { id: 'x-key', t: 'Play it in a new key: two frets higher', how: ctx => { const up = ctx.chords.map(c => ({ ...c, root: mod(c.root + 2), shape: null })); return `<p>Move everything up a whole step. Bass and guitar move every shape two frets higher.</p><p class="seq">${esc(ctx.seq.map(s => cname({ ...s.c, root: mod(s.c.root + 2) })).join(' → '))}</p>${tiles(up.map(c => tile(cname(c), easiest(c))))}<p class="soft">Guitar shortcut: put a capo on fret 2 and keep playing the same shapes as before.</p>${needChords(ctx)}`; } },
+  { id: 'x-call', t: 'Call and response: guitar 2 bars, bass answers', how: () => `<p>Guitar plays something for 2 bars, then stops while the bass answers for 2 bars. Drums keep time the whole way.</p>` },
+  { id: 'x-loop4', t: 'Play the loop 4 times, then end on the first chord', how: () => `<p>Count the loops together. After the 4th time, everyone lands on the first chord and lets it ring out.</p>` },
+  { id: 'x-addone', t: 'Start with drums only, add one player every 4 bars', how: () => `<p>Drums start alone. Bass comes in after 4 bars, guitar 4 bars later. Then reverse it to end.</p>` },
+  { id: 'x-rev', t: 'Play the chords in reverse order', how: ctx => `<p>Same chords, backwards. It's a different song with the same notes.</p><p class="seq">${esc([...ctx.seq].reverse().map(s => cname(s.c)).join(' → '))}</p>${needChords(ctx)}` },
+  { id: 'x-swap', t: 'Swap jobs: guitar plays a bass line, bass plays chords', how: () => `<p>Guitar plays single low notes on the low E and A strings; bass plays two-note chords up high. Keep it simple and fun.</p>` },
+];
+
+const ROLES = [['guitar', 'Guitar', GUITAR], ['bass', 'Bass', BASS], ['drums', 'Drums', DRUMS], ['band', 'Everyone', BAND]];
+window.Challenges = { ROLES, byId: Object.fromEntries(ROLES.flatMap(([r, , l]) => l.map(c => [c.id, { ...c, role: r }]))) };
+})();
+
+</script>
+<script>
 (() => {
 'use strict';
 const $ = id => document.getElementById(id);
@@ -4878,7 +5079,7 @@ const DEFAULTS = {
   drum: null, strum: null, prog: null,
   locks: { drum: false, strum: false, chords: false, key: false },
   mute: { drum: false, gtr: false },
-  modes: { chal: false, change: false }, every: 8,
+  modes: { chal: true, change: false }, every: 8,
   tone: 'clean', volD: 0.8, volG: 0.75, countIn: true, fills: true,
   level: 'standard', spice: false, styleFilter: null,
   mix: { rock: 1, blues: 1, shuffle: 1, country: 1, funk: 1, soul: 1, pop: 1, reggae: 1, latin: 1, jazz: 1, heavy: 1 },
@@ -4963,30 +5164,17 @@ function rollProg(o = {}) {
 }
 
 // ---------------- challenges ----------------
-const CHAL = {
-  guitar: ['Only use the top three strings', 'Play every chord as a power chord', 'Downstrokes only', 'Play each chord higher up the neck, above the 5th fret',
-    'Arpeggiate the chords instead of strumming', 'Slide into every chord change', 'Leave beat 1 empty every other bar', 'Add a little lick in the gaps between strums',
-    'Play half as many strums as the pattern', 'Palm-mute everything except the first strum of each chord', 'Hammer-on one note inside every chord',
-    'Every 4th bar, take a one-bar lick instead of the strum', 'Play only on 2 and 4', 'Use a different shape for each chord than the one shown',
-    'Play it all on two strings: double stops only', 'Let every chord ring as long as you can, then mute it on a cue'],
-  bass: ['Roots only, whole notes', 'Roots and fifths only', 'Lock to the kick drum, note for note', 'Walk up into every chord change',
-    'Octave pattern the whole time', 'Stay above the 5th fret', 'Play only on the offbeats', 'One passing note per bar, no more',
-    'Leave beat 1 empty every other bar', 'Copy the guitar’s rhythm exactly', 'Hold the key’s root note under every chord', 'Play the chord tones in order: root, third, fifth'],
-  drums: ['No hi-hat: ride or toms only', 'Kick only on 1 and 3', 'Play it with a half-time feel', 'Ghost notes on the snare between every backbeat',
-    'Cross-stick on the backbeat, no full snare', 'One fill every 8 bars, maximum', 'Whisper quiet: barely touch the drums', 'Groove on the floor tom instead of the hats',
-    'No cymbals at all', 'Snare only on beat 3', 'Build the groove up for 8 bars, then strip it back', 'Copy the strum pattern’s accents with the kick'],
-  band: ['Start whisper quiet and build to loud over 16 bars', 'Stop together on beat 1 every 8 bars, then come back in', 'Trade the spotlight: each player leads for 4 bars',
-    'Everyone plays half as many notes', 'Hit the & of 4 together every 4 bars', 'One player drops out every 8 bars, in turn', 'Play for two minutes without anyone stopping',
-    'Make it sound like a ballad', 'End together on a cue from the drummer', 'Find a riff everyone can play in unison', 'Play it as quietly as you can, together',
-    'Swap jobs: guitar plays a bass line, bass plays chords'],
-};
-const CHAL_ROLES = [['guitar', 'Guitar', 'guitar'], ['bass', 'Bass', 'bass'], ['drums', 'Drums', 'drum'], ['band', 'Everyone', 'band']];
+const CHAL_ROLES = Challenges.ROLES.map(([r, label]) => [r, label]);
 function rollChal(role) {
   const cur = S.chal || {};
-  const pick = r => { const l = CHAL[r].filter(x => x !== cur[r]); return l[Math.floor(Math.random() * l.length)]; };
   S.chal = { ...cur };
-  for (const [r] of CHAL_ROLES) if (!role || role === r) S.chal[r] = pick(r);
+  for (const [r, , list] of Challenges.ROLES) {
+    if (role && role !== r) continue;
+    const opts = list.filter(c => c.id !== cur[r]);
+    S.chal[r] = opts[Math.floor(Math.random() * opts.length)].id;
+  }
 }
+const chalOk = c => c && Challenges.ROLES.every(([r]) => Challenges.byId[c[r]]);
 
 // ---------------- audio ----------------
 let ctx = null, KITD = null, mixer = null, guitar = null, ready = false, appliedSound = '';
@@ -5388,11 +5576,33 @@ function renderChords() {
   $('like').innerHTML = bits.join(' · ');
   $('like').hidden = !bits.length;
 }
+const chalOpen = new Set();
+function chalCtx() {
+  const v = view(), d = v.drum, tpl = tplOf(d), p = v.prog;
+  const E = { root: 4, acc: '#', q: 'maj', bass: null, bassAcc: '#', shape: DEFAULT_CHORD.shape };
+  const chords = p ? p.chords : [E];
+  const seq = p ? p.seq.map(s => ({ c: p.chords[s.ci], bars: s.bars })) : [{ c: E, bars: 1 }];
+  const bar = compileBar({ tpl, I: d.I, B: d.B, swing: swingOf(d, tpl), fills: 0, extras: false, seed: d.seed, bpm: d.bpm, time: d.time }, 0, false);
+  const lab = t => { const b = Math.floor(t / TPB) + 1, f = Math.round(t % TPB); return f === 0 ? String(b) : f === 6 ? b + '&' : f === 3 ? b + 'e' : f === 9 ? b + 'a' : f === 4 ? b + '&' : f === 8 ? b + 'a' : b + '+'; };
+  const kicks = [...new Set(bar.ev.filter(e => e.lane === 'K').sort((a, b) => a.t - b.t).map(e => lab(e.t)))];
+  let accents = [];
+  if (v.strum) { const st = v.strum, tick = TPB / st.per; accents = [...new Set(st.bars[0].ev.filter(e => e.accent && e.art !== 'chuck').map(e => lab(e.i * tick)))]; }
+  return { chords, seq, key: p ? p.key : { tonic: 4, mode: 'major' }, hasChords: !!p, kicks, accents, strumName: v.strum ? v.strum.name : '', meter: tpl.meter, bpm: d.bpm };
+}
 function renderChal() {
   $('chalCard').hidden = !S.modes.chal;
   if (!S.modes.chal) return;
-  if (!S.chal) rollChal();
-  $('chalList').innerHTML = CHAL_ROLES.map(([r, label]) => `<li><div class="chal-txt"><b>${label}</b><span>${S.chal[r]}</span></div><button class="tool" data-chal="${r}" aria-label="New ${label.toLowerCase()} challenge">${I.dice}</button></li>`).join('');
+  if (!chalOk(S.chal)) rollChal();
+  const ctx = chalCtx();
+  $('chalList').innerHTML = CHAL_ROLES.map(([r, label]) => {
+    const c = Challenges.byId[S.chal[r]], open = chalOpen.has(r);
+    let how = '';
+    if (open) { try { how = c.how(ctx); } catch (e) { console.error(e); how = '<p class="soft">No extra info for this one.</p>'; } }
+    return `<li class="${open ? 'open' : ''}"><div class="chal-row"><div class="chal-txt"><b>${label}</b><span>${c.t}</span></div>`
+      + `<button class="tool" data-chal="${r}" aria-label="New ${label.toLowerCase()} challenge">${I.dice}</button></div>`
+      + `<button class="more" data-more="${r}" aria-expanded="${open}">${open ? 'Hide' : 'Show me how'}${I.chev}</button>`
+      + (open ? `<div class="how">${how}</div>` : '') + `</li>`;
+  }).join('');
 }
 function lockedCount() { return ['drum', 'strum', 'chords'].filter(k => S.locks[k]).length; }
 function renderTools() {
@@ -5618,7 +5828,7 @@ async function share() {
 // ---------------- persistence ----------------
 function save() {
   try {
-    const o = { ...S, jam: serialize() };
+    const o = { ...S, jam: serialize(), chalV2: 1 };
     delete o.drum; delete o.strum; delete o.prog;
     localStorage.setItem(STORE, JSON.stringify(o));
   } catch (e) {}
@@ -5629,6 +5839,7 @@ function load() {
     const o = JSON.parse(localStorage.getItem(STORE) || 'null');
     if (!o) return false;
     for (const k of ['locks', 'modes', 'mix']) if (o[k]) S[k] = { ...S[k], ...o[k] };
+    if (!o.chalV2) S.modes.chal = true;
     for (const k of ['every', 'tone', 'volD', 'volG', 'countIn', 'fills', 'level', 'spice', 'styleFilter', 'chal']) if (o[k] !== undefined) S[k] = o[k];
     if (!['clean', 'edge', 'acoustic'].includes(S.tone)) S.tone = 'clean';
     if (S.styleFilter && !STYLE_BY_ID[S.styleFilter]) S.styleFilter = null;
@@ -5674,6 +5885,7 @@ document.addEventListener('click', e => {
     return;
   }
   if (t.dataset.chal) { rollChal(t.dataset.chal); save(); renderChal(); return; }
+  if (t.dataset.more) { const r = t.dataset.more; if (chalOpen.has(r)) chalOpen.delete(r); else chalOpen.add(r); renderChal(); return; }
   if (t.dataset.every) { S.every = +t.dataset.every; org.change = sched.playing ? sched.bar : 0; save(); renderSettings(); renderPos(); return; }
   if (t.dataset.level) { if (S.level === t.dataset.level) return; S.level = t.dataset.level; save(); renderSettings(); if (!S.locks.chords) doRoll('chords'); return; }
   if (t.dataset.style !== undefined) { S.styleFilter = t.dataset.style || null; S.locks.drum = false; renderDrumSheet(); doRoll('drum'); hideSheet(); return; }
@@ -5698,7 +5910,7 @@ $('setBtn').addEventListener('click', () => { renderSettings(); showSheet('setSh
 $('saveBtn').addEventListener('click', toggleKeep);
 $('shareBtn').addEventListener('click', share);
 $('changeSw').addEventListener('click', () => { S.modes.change = !S.modes.change; org.change = sched.playing ? sched.bar : 0; save(); renderSettings(); renderPos(); });
-$('chalSw').addEventListener('click', () => { S.modes.chal = !S.modes.chal; if (S.modes.chal && !S.chal) rollChal(); save(); renderSettings(); renderChal(); });
+$('chalSw').addEventListener('click', () => { S.modes.chal = !S.modes.chal; if (S.modes.chal && !chalOk(S.chal)) rollChal(); save(); renderSettings(); renderChal(); });
 $('spiceSw').addEventListener('click', () => { S.spice = !S.spice; save(); renderSettings(); if (!S.locks.chords) doRoll('chords'); });
 $('keySw').addEventListener('click', () => { S.locks.key = !S.locks.key; save(); renderSettings(); });
 $('chalRoll').addEventListener('click', () => { rollChal(); save(); renderChal(); const d = $('chalRoll'); d.classList.remove('spin'); void d.offsetWidth; d.classList.add('spin'); });

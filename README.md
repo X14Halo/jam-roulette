@@ -1,6 +1,6 @@
 # Jam Roulette
 
-A band practice game. Roll a drum beat, a rhythm guitar strum that grooves with it, and a few chords that go together, then jam inside those constraints. Lock what you like, roll the rest. Optional Change-up mode re-rolls one part every few bars, and Challenges gives each player a rule to stick to.
+A band practice game. Roll a drum beat, a rhythm guitar strum that grooves with it, and a few chords that go together, then jam inside those constraints. Lock what you like, roll the rest. Optional Change-up mode re-rolls one part every few bars, and Challenges gives each player a rule to stick to, with a "Show me how" panel (chord shapes, double stops, bass positions) built from the chords on screen.
 
 **Play it:** https://x14halo.github.io/jam-roulette/
 

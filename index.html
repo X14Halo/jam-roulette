@@ -105,6 +105,17 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 .step-txt b { display: block; font-size: 16px; font-weight: 650; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .step-txt span { display: block; font-size: 14px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
 .step.empty-step .step-txt span { color: var(--ink-3); }
+/* guided start: the step to do next glows with a hint, later steps wait dimmed */
+.step { transition: opacity .3s, background .3s, box-shadow .3s; }
+.step.guide.empty-step .step-txt span { display: none; }
+.steps.guiding .step.later { opacity: .42; }
+.step.guide { border-radius: 16px; background: color-mix(in srgb, var(--c) 9%, var(--card)); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c) 45%, transparent); margin: 6px -8px; padding: 8px 8px; border-top-color: transparent; }
+.step.guide + .step { border-top-color: transparent; }
+.step .hint { display: none; font-size: 13.5px; font-weight: 600; line-height: 1.3; color: var(--c); margin-top: 4px; white-space: normal; }
+.step.guide .hint { display: block; }
+.step.guide.nudge-lock .tool.lock, .step.guide.nudge-dice .tool.dice { animation: nudge 1.9s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 55%, transparent); } 55% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--c) 0%, transparent); } }
+@media (prefers-reduced-motion: reduce) { .step.guide .tool { animation: none !important; } }
 .step .tool { flex: none; width: 40px; height: 40px; }
 .step .tool svg { width: 20px; height: 20px; }
 .step .tool.dice { width: 44px; height: 44px; }
@@ -386,28 +397,28 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
   <section class="steps" aria-label="Build your jam">
     <div class="step drums" data-step="drum">
       <span class="num">1</span>
-      <div class="step-txt"><b>Roll Drums</b><span id="stepDrum"></span></div>
+      <div class="step-txt"><b>Roll Drums</b><span id="stepDrum"></span><small class="hint"></small></div>
       <button class="tool mute" data-mute="drum" aria-pressed="false" aria-label="Mute drums"></button>
       <button class="tool lock" data-lock="drum" aria-pressed="false" aria-label="Keep drums"></button>
       <button class="tool dice" data-roll="drum" aria-label="Roll new drums"></button>
     </div>
     <div class="step strum" data-step="strum">
       <span class="num">2</span>
-      <div class="step-txt"><b>Roll Strum Pattern</b><span id="stepStrum"></span></div>
+      <div class="step-txt"><b>Roll Strum Pattern</b><span id="stepStrum"></span><small class="hint"></small></div>
       <button class="tool mute" data-mute="gtr" aria-pressed="false" aria-label="Mute guitar"></button>
       <button class="tool lock" data-lock="strum" aria-pressed="false" aria-label="Keep strum"></button>
       <button class="tool dice" data-roll="strum" aria-label="Roll a new strum"></button>
     </div>
     <div class="step chords" data-step="chords">
       <span class="num">3</span>
-      <div class="step-txt"><b>Roll Chords</b><span id="stepChords"></span></div>
+      <div class="step-txt"><b>Roll Chords</b><span id="stepChords"></span><small class="hint"></small></div>
       <button class="tool mute" data-mute="chords" aria-pressed="false" aria-label="Mute chords"></button>
       <button class="tool lock" data-lock="chords" aria-pressed="false" aria-label="Keep chords"></button>
       <button class="tool dice" data-roll="chords" aria-label="Roll new chords"></button>
     </div>
     <div class="step bass" data-step="bass">
       <span class="num">4</span>
-      <div class="step-txt"><b>Roll Bass Line</b><span id="stepBass"></span></div>
+      <div class="step-txt"><b>Roll Bass Line</b><span id="stepBass"></span><small class="hint"></small></div>
       <button class="tool mute" data-mute="bass" aria-pressed="false" aria-label="Mute bass"></button>
       <button class="tool lock" data-lock="bass" aria-pressed="false" aria-label="Keep bass line"></button>
       <button class="tool dice" data-roll="bass" aria-label="Roll a bass line"></button>
@@ -6206,7 +6217,7 @@ const DEFAULTS = {
   tone: 'clean', volD: 0.8, volG: 0.75, volB: 0.75, cx: 'simple', countIn: true, fills: true,
   level: 'standard', spice: false, styleFilter: null,
   mix: { rock: 1, blues: 1, shuffle: 1, country: 1, funk: 1, soul: 1, pop: 1, reggae: 1, latin: 1, jazz: 1, heavy: 1 },
-  chal: null,
+  chal: null, guide: false,
 };
 const STORE = 'jam-roulette-v1', KEEP = 'jam-roulette-keepers-v1';
 let S = JSON.parse(JSON.stringify(DEFAULTS));
@@ -6722,6 +6733,7 @@ function rollPlan() {
 }
 // Roll all: every unlocked part at once, including parts not added yet
 function rollAll() {
+  S.guide = false;   // rolling everything at once means you know your way around
   const plan = rollPlan();
   if (!plan.layers.length) { toast('Everything is locked. Unlock something to roll it.'); return; }
   for (const l of plan.layers) doRoll(l, true);
@@ -6963,6 +6975,37 @@ function renderChal() {
       + (open ? `<div class="how">${how}</div>` : '') + `</li>`;
   }).join('');
 }
+// Guided start: after a fresh start, walk through the steps one at a time. Keeping a step moves the glow on;
+// Roll All (or adding a bass line at the end) finishes the guide.
+const GUIDE_HINT = {
+  drum: 'Roll until you like the beat, then tap the lock to keep it.',
+  strum: 'Now roll strum patterns until one feels right, then keep it.',
+  chords: 'Roll chords to play over, then keep the ones you like.',
+  bass: 'Optional: roll a bass line, or just start jamming.',
+};
+function guideStep() {
+  if (!S.guide) return null;
+  const v = view();
+  if (!S.locks.drum) return 'drum';
+  if (!S.locks.strum) return 'strum';
+  if (!S.locks.chords) return 'chords';
+  if (!v.bass) return 'bass';
+  return null;
+}
+function renderGuide(has) {
+  let g = guideStep();
+  if (S.guide && !g) { S.guide = false; save(); }
+  const order = ['drum', 'strum', 'chords', 'bass'], gi = order.indexOf(g);
+  document.querySelector('.steps').classList.toggle('guiding', !!g && g !== 'bass');
+  document.querySelectorAll('.steps .step').forEach(row => {
+    const k = row.dataset.step, on = k === g;
+    row.classList.toggle('guide', on);
+    row.classList.toggle('later', !!g && order.indexOf(k) > gi);
+    row.classList.toggle('nudge-lock', on && has[k] && k !== 'bass');
+    row.classList.toggle('nudge-dice', on && !has[k]);
+    row.querySelector('.hint').textContent = on ? GUIDE_HINT[k] : '';
+  });
+}
 function lockedCount() { return LAYERS().filter(k => S.locks[k]).length; }
 function renderTools() {
   const v = view();
@@ -6976,6 +7019,7 @@ function renderTools() {
     $(CARD[k]).classList.toggle('locked', on);
     const row = b.closest('.step'); row.classList.toggle('kept', on); row.classList.toggle('empty-step', !has[k]);
   });
+  renderGuide(has);
   const d = v.drum, tpl = tplOf(d);
   $('stepDrum').textContent = `${tpl.name} · ${d.bpm} BPM`;
   $('stepStrum').textContent = v.strum ? v.strum.name : 'Not rolled yet';
@@ -7221,7 +7265,7 @@ function load() {
     for (const k of ['locks', 'modes', 'mix', 'mute']) if (o[k]) S[k] = { ...S[k], ...o[k] };
     if (!o.chalV2) S.modes.chal = true;
     if (!o.bassV2) S.mute.bass = false;   // the old kick bass was off by default; the bass line is its own step now
-    for (const k of ['every', 'tone', 'volD', 'volG', 'volB', 'cx', 'countIn', 'fills', 'level', 'styleFilter', 'chal']) if (o[k] !== undefined) S[k] = o[k];
+    for (const k of ['every', 'tone', 'volD', 'volG', 'volB', 'cx', 'countIn', 'fills', 'level', 'styleFilter', 'chal', 'guide']) if (o[k] !== undefined) S[k] = o[k];
     if (!['simple', 'medium', 'advanced'].includes(S.cx)) S.cx = 'simple';
     if (!['clean', 'edge', 'acoustic'].includes(S.tone)) S.tone = 'clean';
     if (S.styleFilter && !STYLE_BY_ID[S.styleFilter]) S.styleFilter = null;
@@ -7310,6 +7354,7 @@ for (const id of ['volD', 'volG', 'volB']) $(id).addEventListener('input', e => 
 // chord level back to normal. Settings (modes, sound, styles in the mix) and Keepers stay.
 function startOver() {
   for (const k of Object.keys(pend)) delete pend[k];
+  S.guide = true;
   S.styleFilter = null;
   S.locks = { drum: false, strum: false, chords: false, bass: false, key: false };
   S.mute = { ...DEFAULTS.mute };
@@ -7321,7 +7366,7 @@ function startOver() {
   applyVolumes(); if (!sched.playing) applyMix();
   save(); hideSheet(); restartNow(); renderAll(); flash('drum');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  toast('Fresh start. Roll drums until you like them, then tap the lock to keep them.');
+  toast('Fresh start. Follow the highlighted step.');
 }
 $('resetBtn').addEventListener('click', startOver);
 // the button at the top asks once more before wiping the jam, so a stray tap mid-song is harmless
@@ -7347,10 +7392,10 @@ function boot() {
   if (jam) { S.drum = jam.drum; S.strum = jam.strum; S.prog = jam.prog; S.bass = jam.bass; S.locks = { ...S.locks, drum: true, strum: !!jam.strum, chords: !!jam.prog, bass: !!jam.bass }; }
   if (!S.drum) S.drum = rollDrum({});
   const fresh = !jam && !localStorage_has();
+  if (fresh) S.guide = true;
   renderAll();
   setPlay();
   if (jam) setTimeout(() => toast('Shared jam loaded and locked. Press play.'), 400);
-  else if (fresh) setTimeout(() => toast('Roll drums until you like them, then tap the lock to keep them.'), 600);
   loadAudio().catch(err => { console.error(err); toast('Could not load the sounds on this browser.'); });
   window.__jam = { S, sched, view, rollAll, doRoll, bassBar, rollBass, get bass() { return bass; }, serialize, deserialize, org, chordAt, guitarBar, get ctx() { return ctx; }, get guitar() { return guitar; }, get mixer() { return mixer; }, get buses() { return { master, drumBus, gtrBus, bassBus }; }, renderAll, start, stop, setLayer, rollStrum, rollProg, rollDrum, tplNow };
 }

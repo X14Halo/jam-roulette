@@ -133,6 +133,21 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 }
 .meta-btn b { color: var(--ink); font-weight: 700; }
 .meta-btn svg { width: 16px; height: 16px; color: var(--ink-3); }
+.mix { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 0.5px solid var(--line); }
+.mix .mbtn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--fill); color: var(--c); transition: background .2s, color .2s, transform .15s; }
+.mix .mbtn svg { width: 20px; height: 20px; }
+.mix .mbtn:active { transform: scale(.9); }
+.mix .mbtn[aria-pressed="true"] { color: var(--ink-3); }
+.mix input[type=range] { flex: 1; min-width: 0; }
+.mix.muted input[type=range] { opacity: .4; }
+.mix small { flex: none; width: 46px; text-align: right; font-size: 13px; font-weight: 600; color: var(--ink-3); }
+.empty { margin-top: 6px; padding: 16px; border-radius: 16px; background: var(--card-2); display: grid; gap: 12px; justify-items: start; }
+.empty p { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.4; }
+.big-roll { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 999px; background: var(--c); color: #fff; font-size: 16px; font-weight: 700; transition: transform .15s ease; }
+.big-roll:active { transform: scale(.96); }
+.big-roll svg { width: 20px; height: 20px; }
+.card.waiting .label i { background: var(--ink-3); }
+.card.waiting .label { color: var(--ink-3); }
 .tip { margin: 10px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.4; }
 .fresh { animation: fresh .38s cubic-bezier(.2, .8, .2, 1); }
 @keyframes fresh { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -257,10 +272,10 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 .switch[aria-checked="true"] { background: var(--on); }
 .switch[aria-checked="true"]::after { transform: translateX(20px); }
 input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; margin: 0; }
-input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--strum) var(--v, 50%), var(--fill-2) var(--v, 50%)); }
+input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--c, var(--strum)) var(--v, 50%), var(--fill-2) var(--v, 50%)); }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #fff; box-shadow: 0 0.5px 4px rgba(0,0,0,.25), 0 3px 8px rgba(0,0,0,.12); margin-top: -12px; }
 input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--fill-2); }
-input[type=range]::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--strum); }
+input[type=range]::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--c, var(--strum)); }
 input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 0.5px 4px rgba(0,0,0,.25); }
 .vol { display: flex; align-items: center; gap: 10px; width: 100%; }
 .vol svg { width: 18px; height: 18px; color: var(--ink-3); flex: none; }
@@ -313,6 +328,7 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
     <div id="drumBody">
       <h2 class="name" id="drumName">…</h2>
       <button class="meta-btn" id="drumMeta" aria-label="Tempo and style"></button>
+      <div class="mix" id="mixD"><button class="mbtn" data-mute="drum" aria-pressed="false" aria-label="Mute drums"></button><input type="range" id="volD" min="0" max="100" aria-label="Drums volume"><small id="volDTxt"></small></div>
     </div>
   </section>
 
@@ -324,10 +340,15 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
         <button class="tool dice" data-roll="strum" aria-label="Roll a new strum"></button>
       </div>
     </div>
+    <div id="strumEmpty" class="empty" hidden>
+      <p>Lock in a drum beat you like and a strum pattern that grooves with it rolls in here.</p>
+      <button class="big-roll" data-roll="strum"><span data-icon="dice"></span>Roll a strum now</button>
+    </div>
     <div id="strumBody">
       <h2 class="name" id="strumName"></h2>
       <div class="grid" id="strumGrid"></div>
       <p class="tip" id="strumTip"></p>
+      <div class="mix" id="mixG"><button class="mbtn" data-mute="gtr" aria-pressed="false" aria-label="Mute guitar"></button><input type="range" id="volG" min="0" max="100" aria-label="Guitar volume"><small id="volGTxt"></small></div>
     </div>
   </section>
 
@@ -338,6 +359,10 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
         <button class="tool lock" data-lock="chords" aria-pressed="false" aria-label="Lock chords"></button>
         <button class="tool dice" data-roll="chords" aria-label="Roll new chords"></button>
       </div>
+    </div>
+    <div id="chordEmpty" class="empty" hidden>
+      <p>Lock in the strum and a chord progression rolls in here, with the fingerings. Until then the guitar strums an E.</p>
+      <button class="big-roll" data-roll="chords"><span data-icon="dice"></span>Roll chords now</button>
     </div>
     <div id="chordBody">
       <div class="tiles" id="tiles"></div>
@@ -407,8 +432,6 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
     <h3>Sound</h3>
     <div class="group">
       <div class="item col"><span>Guitar tone</span><div class="seg" id="toneSeg" role="group" aria-label="Guitar tone"></div></div>
-      <div class="item col"><span>Drums volume</span><div class="vol"><span data-icon="vol"></span><input type="range" id="volD" min="0" max="100" aria-label="Drums volume"></div></div>
-      <div class="item col"><span>Guitar volume</span><div class="vol"><span data-icon="vol"></span><input type="range" id="volG" min="0" max="100" aria-label="Guitar volume"></div></div>
       <div class="item"><span>Count-in<small>One bar of clicks before the band comes in</small></span><button class="switch" id="countSw" role="switch" aria-checked="true" aria-label="Count-in"></button></div>
       <div class="item"><span>Drum fills<small>A fill at the end of each phrase</small></span><button class="switch" id="fillSw" role="switch" aria-checked="true" aria-label="Drum fills"></button></div>
     </div>
@@ -416,6 +439,10 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
     <h3>Styles in the mix</h3>
     <div class="group"><div class="item col"><div class="chips" id="mixChips"></div></div></div>
     <p class="note">Drum rolls pick from the styles that are on.</p>
+
+    <h3>Start over</h3>
+    <button class="wide-btn" id="resetBtn">Start over with just drums</button>
+    <p class="note">Clears the strum and chords so you can build up again: drums first, then the strum, then chords.</p>
 
     <h3>Keepers</h3>
     <button class="wide-btn" id="saveBtn"></button>
@@ -4797,6 +4824,7 @@ document.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = I[el.dat
 document.querySelectorAll('.tool.dice').forEach(b => { b.innerHTML = I.dice; });
 $('bpmDown').innerHTML = I.minus; $('bpmUp').innerHTML = I.plus;
 $('setBtn').innerHTML = I.gear;
+$('resetBtn').innerHTML = I.dice + '<span>Start over with just drums</span>';
 $('chalRoll').innerHTML = I.dice;
 
 // ---------------- state ----------------
@@ -5156,13 +5184,9 @@ function doRoll(layer, quiet) {
 function rollStrumFor(d) { const keep = S.drum; S.drum = d; try { return rollStrum({ drum: d }); } finally { S.drum = keep; } }
 
 function rollPlan() {
-  const v = view();
-  const exists = { drum: true, strum: !!v.strum, chords: !!v.prog };
-  const unlocked = ['drum', 'strum', 'chords'].filter(l => exists[l] && !S.locks[l]);
-  if (unlocked.length) return { layers: unlocked, kind: 'reroll' };
-  const next = ['drum', 'strum', 'chords'].find(l => !exists[l]);
-  return next ? { layers: [next], kind: 'new' } : { layers: [], kind: 'none' };
+  return { layers: ['drum', 'strum', 'chords'].filter(l => !S.locks[l]) };
 }
+// Roll all: every unlocked part at once, including parts not added yet
 function rollAll() {
   const plan = rollPlan();
   if (!plan.layers.length) { toast('Everything is locked. Unlock something to roll it.'); return; }
@@ -5281,6 +5305,9 @@ function renderDrum() {
 }
 function renderStrum() {
   const st = view().strum;
+  $('strumEmpty').hidden = !!st; $('strumBody').hidden = !st;
+  $('strumCard').classList.toggle('waiting', !st);
+  $('strumCard').querySelectorAll('.head .tool').forEach(b => { b.hidden = !st; });
   if (!st) return;
   $('strumName').textContent = st.name;
   $('strumTip').textContent = st.tip;
@@ -5290,7 +5317,10 @@ const barsTxt = b => (b === 0.5 ? '½ bar' : b === 1 ? '1 bar' : `${b} bars`);
 const SEC_WORD = { Verse: 'Verse', Chorus: 'Chorus', Bridge: 'Bridge', 'Pre-chorus': 'Pre-chorus', Intro: 'Intro riff', Vamp: 'Vamp', Blues: 'Blues', Turnaround: 'Turnaround' };
 function renderChords() {
   const p = view().prog;
-  if (!p) return;
+  $('chordEmpty').hidden = !!p; $('chordBody').hidden = !p;
+  $('chordCard').classList.toggle('waiting', !p);
+  $('chordCard').querySelectorAll('.head .tool').forEach(b => { b.hidden = !p; });
+  if (!p) { $('chordKey').textContent = ''; return; }
   $('chordKey').textContent = `Key of ${Prog.keyShort(p.key)} · ${p.form || SEC_WORD[p.sec] || 'Verse'}`;
   const big = p.seq.length > 6;
   $('form').hidden = !big;
@@ -5319,6 +5349,14 @@ function renderTools() {
     b.setAttribute('aria-label', (on ? 'Unlock ' : 'Lock ') + (k === 'drum' ? 'drums' : k));
     b.closest('.card').classList.toggle('locked', on);
   });
+  for (const [k, id, txt] of [['drum', 'volD', 'Drums'], ['gtr', 'volG', 'Guitar']]) {
+    const on = !!S.mute[k], b = document.querySelector(`[data-mute="${k}"]`);
+    b.setAttribute('aria-pressed', String(on)); b.innerHTML = on ? I.spkOff : I.spk;
+    b.setAttribute('aria-label', (on ? 'Unmute ' : 'Mute ') + txt.toLowerCase());
+    b.parentElement.classList.toggle('muted', on);
+    setRange($(id), S[id]);
+    $(id + 'Txt').textContent = on ? 'Muted' : Math.round(S[id] * 100) + '%';
+  }
   const n = lockedCount();
   $('rollLabel').innerHTML = n === 3 ? 'All locked' : n ? `Roll all <small>· ${n} locked</small>` : 'Roll all';
   $('rollAll').classList.toggle('off', n === 3);
@@ -5429,7 +5467,6 @@ function renderSettings() {
   $('everySeg').innerHTML = [4, 8, 16].map(n => `<button data-every="${n}" aria-pressed="${S.every === n}">${n} bars</button>`).join('');
   $('levelSeg').innerHTML = [['easy', 'Open chords'], ['standard', 'Any']].map(([k, t]) => `<button data-level="${k}" aria-pressed="${S.level === k}">${t}</button>`).join('');
   $('toneSeg').innerHTML = [['clean', 'Clean'], ['edge', 'Edge of breakup'], ['acoustic', 'Acoustic']].map(([k, t]) => `<button data-tone="${k}" aria-pressed="${S.tone === k}">${t}</button>`).join('');
-  setRange($('volD'), S.volD); setRange($('volG'), S.volG);
   $('mixChips').innerHTML = STYLES.map(s => `<button class="chip" data-mix="${s.id}" aria-pressed="${!!S.mix[s.id]}">${s.name}</button>`).join('');
   $('saveBtn').innerHTML = (isKept() ? I.starOn : I.star) + `<span>${isKept() ? 'Saved. Tap to remove' : 'Save this jam'}</span>`;
   $('saveBtn').style.color = isKept() ? 'var(--star)' : '';
@@ -5525,6 +5562,7 @@ function save() {
     localStorage.setItem(STORE, JSON.stringify(o));
   } catch (e) {}
 }
+function localStorage_has() { try { return !!localStorage.getItem(STORE); } catch (e) { return false; } }
 function load() {
   try {
     const o = JSON.parse(localStorage.getItem(STORE) || 'null');
@@ -5562,7 +5600,18 @@ function setBpm(v) {
 document.addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
   if (t.dataset.roll) { doRoll(t.dataset.roll); return; }
-  if (t.dataset.lock) { const k = t.dataset.lock; S.locks[k] = !S.locks[k]; save(); renderTools(); return; }
+  if (t.dataset.lock) {
+    const k = t.dataset.lock; S.locks[k] = !S.locks[k]; save(); renderTools();
+    // build up step by step: locking the drums brings in a strum, locking the strum brings in chords
+    if (S.locks[k] && k === 'drum' && !view().strum) { doRoll('strum'); toast('Drums locked. Roll strums until one fits, then lock it.'); setTimeout(() => $('strumCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80); }
+    else if (S.locks[k] && k === 'strum' && !view().prog) { doRoll('chords'); toast('Strum locked. Now roll chords until you like them.'); setTimeout(() => $('chordCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80); }
+    return;
+  }
+  if (t.dataset.mute) {
+    const k = t.dataset.mute; S.mute[k] = !S.mute[k]; save(); renderTools();
+    if (S.mute[k] && ctx && sched.playing) { if (k === 'drum') mixer.fadeAll(ctx.currentTime, 0.03); else guitar.stopAll(ctx.currentTime); }
+    return;
+  }
   if (t.dataset.chal) { rollChal(t.dataset.chal); save(); renderChal(); return; }
   if (t.dataset.every) { S.every = +t.dataset.every; org.change = sched.playing ? sched.bar : 0; save(); renderSettings(); renderPos(); return; }
   if (t.dataset.level) { if (S.level === t.dataset.level) return; S.level = t.dataset.level; save(); renderSettings(); if (!S.locks.chords) doRoll('chords'); return; }
@@ -5594,7 +5643,18 @@ $('keySw').addEventListener('click', () => { S.locks.key = !S.locks.key; save();
 $('chalRoll').addEventListener('click', () => { rollChal(); save(); renderChal(); const d = $('chalRoll'); d.classList.remove('spin'); void d.offsetWidth; d.classList.add('spin'); });
 $('countSw').addEventListener('click', () => { S.countIn = !S.countIn; save(); renderSettings(); });
 $('fillSw').addEventListener('click', () => { S.fills = !S.fills; save(); renderSettings(); });
-for (const id of ['volD', 'volG']) $(id).addEventListener('input', e => { S[id] = e.target.value / 100; e.target.style.setProperty('--v', `${e.target.value}%`); applyVolumes(); save(); });
+for (const id of ['volD', 'volG']) $(id).addEventListener('input', e => {
+  S[id] = e.target.value / 100; e.target.style.setProperty('--v', `${e.target.value}%`);
+  const k = id === 'volD' ? 'drum' : 'gtr';
+  if (S.mute[k] && S[id] > 0) S.mute[k] = false;   // moving the slider brings a muted part back
+  applyVolumes(); save(); renderTools();
+});
+$('resetBtn').addEventListener('click', () => {
+  setLayer('strum', null); setLayer('prog', null);
+  S.locks = { ...S.locks, drum: false, strum: false, chords: false };
+  save(); hideSheet(); renderAll(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  toast('Starting over. Roll drums until you like them, then lock them.');
+});
 document.addEventListener('keydown', e => {
   if (openSheet || e.target.closest('input')) return;
   if (e.code === 'Space') { e.preventDefault(); $('play').click(); }
@@ -5609,11 +5669,11 @@ function boot() {
   load();
   if (jam) { S.drum = jam.drum; S.strum = jam.strum; S.prog = jam.prog; S.locks = { ...S.locks, drum: true, strum: !!jam.strum, chords: !!jam.prog }; }
   if (!S.drum) S.drum = rollDrum({});
-  if (!S.strum) S.strum = rollStrum();
-  if (!S.prog) S.prog = rollProg();
+  const fresh = !jam && !localStorage_has();
   renderAll();
   setPlay();
   if (jam) setTimeout(() => toast('Shared jam loaded and locked. Press play.'), 400);
+  else if (fresh) setTimeout(() => toast('Roll drums until you like them, then lock them.'), 600);
   loadAudio().catch(err => { console.error(err); toast('Could not load the sounds on this browser.'); });
   window.__jam = { S, sched, view, rollAll, doRoll, serialize, deserialize, org, chordAt, guitarBar, get ctx() { return ctx; }, get guitar() { return guitar; }, get mixer() { return mixer; }, get buses() { return { master, drumBus, gtrBus }; }, renderAll, start, stop, setLayer, rollStrum, rollProg, rollDrum, tplNow };
 }

@@ -6625,8 +6625,10 @@ function iosMediaSession(on) {
     if (on) keepAlive.play().catch(() => {}); else keepAlive.pause();
   } catch (e) {}
 }
+let hasPlayed = false;   // has the band pressed play yet (this visit, or since Start over)
 async function start(atTime) {
   if (!ready) return;
+  hasPlayed = true;
   iosMediaSession(true);
   if (ctx.state !== 'running') await ctx.resume();
   applyPending(0);
@@ -7297,7 +7299,12 @@ function setBpm(v) {
 // ---------------- events ----------------
 document.addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
-  if (t.dataset.roll) { doRoll(t.dataset.roll); return; }
+  if (t.dataset.roll) {
+    doRoll(t.dataset.roll);
+    // the first drum roll starts the music, so you hear what you rolled straight away
+    if (t.dataset.roll === 'drum' && !hasPlayed && !sched.playing && ready) start();
+    return;
+  }
   if (t.dataset.lock) {
     const k = t.dataset.lock; S.locks[k] = !S.locks[k]; save(); renderTools();
     // build up step by step: locking the drums brings in a strum, locking the strum brings in chords
@@ -7354,6 +7361,7 @@ for (const id of ['volD', 'volG', 'volB']) $(id).addEventListener('input', e => 
 // chord level back to normal. Settings (modes, sound, styles in the mix) and Keepers stay.
 function startOver() {
   for (const k of Object.keys(pend)) delete pend[k];
+  if (!sched.playing) hasPlayed = false;   // the next drum roll starts the music again
   S.guide = true;
   S.styleFilter = null;
   S.locks = { drum: false, strum: false, chords: false, bass: false, key: false };

@@ -239,6 +239,7 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 
 /* challenges */
 .chal-list { list-style: none; margin: 4px 0 0; padding: 0; }
+.chalnote { margin: -2px 0 6px; font-size: 13.5px; color: var(--ink-3); line-height: 1.4; }
 .chal-list li { padding: 12px 0 10px; border-top: 0.5px solid var(--line); }
 .chal-list li:first-child { border-top: 0; }
 .chal-row { display: flex; align-items: center; gap: 12px; }
@@ -468,6 +469,7 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
       <div class="label"><i></i>Challenges</div>
       <div class="tools"><button class="tool dice" id="chalRoll" aria-label="New challenges"></button></div>
     </div>
+    <p class="chalnote">Just for the band to try. Rolling challenges never changes the music.</p>
     <ul class="chal-list" id="chalList"></ul>
   </section>
 </div>
@@ -511,7 +513,7 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
     <div class="group">
       <div class="item"><span>Change-up<small>Every few bars, one unlocked card gets a new roll</small></span><button class="switch" id="changeSw" role="switch" aria-checked="false" aria-label="Change-up"></button></div>
       <div class="item" id="everyRow"><span>Change every</span><div class="seg" id="everySeg" role="group" aria-label="Change every"></div></div>
-      <div class="item"><span>Challenges<small>A rule for each player to stick to</small></span><button class="switch" id="chalSw" role="switch" aria-checked="false" aria-label="Challenges"></button></div>
+      <div class="item"><span>Challenges<small>A rule for each player to try. Rolling them never changes the music.</small></span><button class="switch" id="chalSw" role="switch" aria-checked="false" aria-label="Challenges"></button></div>
     </div>
 
     <h3>Chords</h3>

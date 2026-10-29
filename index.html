@@ -139,6 +139,8 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 .bs-x { stroke: var(--ink-2); stroke-width: 2.2; stroke-linecap: round; }
 .bs-floor { stroke: var(--line-2); stroke-width: 1; stroke-dasharray: 2 3; }
 .card.chal { --c: var(--modes); }
+.card.chords.muted #chordBody { opacity: .35; filter: saturate(.3); transition: opacity .2s; }
+.drone { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: var(--chords); }
 .card.locked { box-shadow: var(--shadow), inset 0 0 0 2px color-mix(in srgb, var(--c) 55%, transparent); }
 .head { display: flex; align-items: center; gap: 10px; min-height: 26px; }
 .label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--c); }
@@ -388,7 +390,7 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
     <div class="step chords" data-step="chords">
       <span class="num">3</span>
       <div class="step-txt"><b>Roll Chords</b><span id="stepChords"></span></div>
-      <button class="tool mute" hidden aria-hidden="true" tabindex="-1"></button>
+      <button class="tool mute" data-mute="chords" aria-pressed="false" aria-label="Mute chords"></button>
       <button class="tool lock" data-lock="chords" aria-pressed="false" aria-label="Keep chords"></button>
       <button class="tool dice" data-roll="chords" aria-label="Roll new chords"></button>
     </div>
@@ -430,6 +432,7 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
     <div class="head">
       <div class="label"><i></i>Chords<span id="chordKey"></span></div>
     </div>
+    <p class="drone" id="droneNote" hidden></p>
     <div id="chordBody">
       <div class="tiles" id="tiles"></div>
       <div class="form" id="form" hidden></div>
@@ -5239,6 +5242,7 @@ const ARCH = [
     { meters: ['6/8'], grid: 't12', bars: ['R.. 3.a'], smooth: true, tempo: [36, 90], styles: { soul: 2, blues: 2, country: 1.5 }, tags: ['Approach'] }),
   A('afrosix', 'Afro Six Bass', 'Root on 1, fifth on 3 and 6, rolling with the bell.',
     { meters: ['6/8'], grid: 't12', bars: ['R.5 ..5'], tempo: [60, 130], styles: { latin: 3, jazz: 2 }, tags: ['Root-fifth'] }),
+
 ];
 
 // shuffle and 6/8 versions, the same way the strums get them
@@ -5656,8 +5660,17 @@ function createBass(ctx, destination) {
   const sat = ctx.createWaveShaper();
   { const n = 2048, c = new Float32Array(n); for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 2 - 1; c[i] = Math.tanh(1.8 * x) / Math.tanh(1.8); } sat.curve = c; }
   const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 32; hp.Q.value = 0.6;
-  const body = ctx.createBiquadFilter(); body.type = 'peaking'; body.frequency.value = 110; body.gain.value = 2.5; body.Q.value = 0.8;
+  const body = ctx.createBiquadFilter(); body.type = 'peaking'; body.frequency.value = 110; body.gain.value = 0; body.Q.value = 0.8;
   out.connect(sat).connect(hp).connect(body).connect(destination);
+  // Small speakers (phones, laptops) can't play a bass's low fundamentals, so a parallel path adds the upper
+  // harmonics a bass amp's growl would have. The ear fills in the missing low note from them.
+  const drive = ctx.createWaveShaper();
+  { const n = 2048, c = new Float32Array(n); for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 2 - 1; c[i] = Math.tanh(5 * x) * 0.8 + 0.2 * Math.abs(x); } drive.curve = c; drive.oversample = '2x'; }
+  const pre = ctx.createGain(); pre.gain.value = 2.2;
+  const bpH = ctx.createBiquadFilter(); bpH.type = 'highpass'; bpH.frequency.value = 220; bpH.Q.value = 0.7;
+  const bpL = ctx.createBiquadFilter(); bpL.type = 'lowpass'; bpL.frequency.value = 1500; bpL.Q.value = 0.7;
+  const grit = ctx.createGain(); grit.gain.value = 0.48;
+  out.connect(pre).connect(drive).connect(bpH).connect(bpL).connect(grit).connect(destination);
   // a short burst of noise, shared by plucks and dead notes
   const nb = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.06), ctx.sampleRate);
   { const d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3); }
@@ -5694,11 +5707,11 @@ function createBass(ctx, destination) {
       if (slide) { o.frequency.setValueAtTime(ff * Math.pow(2, -2 / 12), t); o.frequency.exponentialRampToValueAtTime(ff, t + 0.075); }
       else o.frequency.setValueAtTime(ff, t);
     }
-    const sg = ctx.createGain(); sg.gain.value = 0.22;
-    const tg = ctx.createGain(); tg.gain.value = 0.1;
+    const sg = ctx.createGain(); sg.gain.value = 0.3;
+    const tg = ctx.createGain(); tg.gain.value = 0.16;
     const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 1.1;
-    const bright = 260 + 1500 * vel;
-    lp.frequency.setValueAtTime(bright, t); lp.frequency.setTargetAtTime(330, t + 0.01, 0.12 + 0.1 * vel);
+    const bright = 500 + 1700 * vel;
+    lp.frequency.setValueAtTime(bright, t); lp.frequency.setTargetAtTime(520, t + 0.01, 0.14 + 0.1 * vel);
     const g = ctx.createGain();
     const peak = (kind === 'ghost' ? 0.5 : 0.62) * vel;
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + 0.005);
@@ -5941,7 +5954,7 @@ $('chalRoll').innerHTML = I.dice;
 const DEFAULTS = {
   drum: null, strum: null, prog: null, bass: null,
   locks: { drum: false, strum: false, chords: false, bass: false, key: false },
-  mute: { drum: false, gtr: false, bass: false },
+  mute: { drum: false, gtr: false, bass: false, chords: false },
   modes: { chal: true, change: false }, every: 8,
   tone: 'clean', volD: 0.8, volG: 0.75, volB: 0.75, cx: 'simple', countIn: true, fills: true,
   level: 'standard', spice: false, styleFilter: null,
@@ -6093,7 +6106,7 @@ function applyVolumes(instant) {
   const t = ctx.currentTime, tc = instant ? 0.001 : 0.04;
   drumBus.gain.setTargetAtTime(curve(S.volD) * 1.3, t, tc);
   gtrBus.gain.setTargetAtTime(curve(S.volG) * GTR_TRIM, t, tc);
-  bassBus.gain.setTargetAtTime(curve(S.volB) * 0.6, t, tc);   // sits just under the guitar
+  bassBus.gain.setTargetAtTime(curve(S.volB) * 0.45, t, tc);   // sits just under the guitar
 }
 const GTR_TRIM = 0.78, MASTER = 0.88;
 function applyMix(instant) {
@@ -6117,7 +6130,16 @@ function countInBar(tpl) {
 }
 
 const DEFAULT_CHORD = { root: 4, q: 'maj', shape: { frets: [0, 2, 2, 1, 0, 0] } };
+// Chords muted: guitar and bass sit on one note, the key's home note (E before any chords are rolled).
+// The guitar plays it as a root-and-octave shape so every strum still sounds full.
+function droneChord() {
+  const root = S.prog ? S.prog.key.tonic : 4;
+  const f6 = mod(root - 4, 12), f5 = mod(root - 9, 12);
+  const frets = f6 <= 7 ? [f6, -1, f6 + 2, -1, -1, -1] : [-1, f5, -1, f5 + 2, -1, -1];
+  return { root, q: '5', acc: S.prog ? S.prog.chords[0].acc : '#', shape: { frets } };
+}
 function chordAt(bar, beatInBar) {
+  if (S.mute.chords) return { c: droneChord(), key: 'drone', seqIdx: -1, ci: -1, frac: 0 };
   if (!S.prog) return { c: DEFAULT_CHORD, key: 'default', seqIdx: -1, ci: -1 };
   const bpb = beatsOf(tplNow());
   const seq = S.prog.seq, loop = seq.reduce((a, s) => a + s.bars * bpb, 0);
@@ -6643,6 +6665,11 @@ function renderStrum() {
 }
 const barsTxt = b => (b === 0.5 ? '½ bar' : b === 1 ? '1 bar' : `${b} bars`);
 const SEC_WORD = { Verse: 'Verse', Chorus: 'Chorus', Bridge: 'Bridge', 'Pre-chorus': 'Pre-chorus', Intro: 'Intro riff', Vamp: 'Vamp', Blues: 'Blues', Turnaround: 'Turnaround' };
+function droneName() {
+  const p = view().prog, root = p ? p.key.tonic : 4;
+  const flat = p && (p.key.mode === 'major' ? [5, 10, 3, 8, 1, 6] : [2, 7, 0, 5, 10, 3]).includes(root);
+  return (flat ? NOTE_F : NOTE_S)[root];
+}
 function renderChords() {
   const p = view().prog;
   $('chordCard').hidden = !p;
@@ -6706,7 +6733,8 @@ function renderTools() {
   $('stepDrum').textContent = `${tpl.name} · ${d.bpm} BPM`;
   $('stepStrum').textContent = v.strum ? v.strum.name : 'Not rolled yet';
   $('stepBass').textContent = v.bass ? v.bass.name : 'Optional · add one any time';
-  $('stepChords').textContent = v.prog ? `Key of ${Prog.keyShort(v.prog.key)} · ${v.prog.sig.split(' ').filter((c, i, a) => c !== a[i - 1]).slice(0, 5).join(' ')}` : 'Not rolled yet';
+  const dn = droneName();
+  $('stepChords').textContent = S.mute.chords ? `Muted · everyone plays ${dn}` : v.prog ? `Key of ${Prog.keyShort(v.prog.key)} · ${v.prog.sig.split(' ').filter((c, i, a) => c !== a[i - 1]).slice(0, 5).join(' ')}` : 'Not rolled yet';
   for (const [k, id, txt] of [['drum', 'volD', 'Drums'], ['gtr', 'volG', 'Guitar'], ['bass', 'volB', 'Bass']]) {
     const on = !!S.mute[k];
     document.querySelectorAll(`[data-mute="${k}"]`).forEach(b => {
@@ -6719,6 +6747,11 @@ function renderTools() {
   }
   document.querySelector('.step[data-step="strum"] [data-mute]').hidden = !has.strum;
   document.querySelector('.step[data-step="bass"] [data-mute]').hidden = !has.bass;
+  { const b = document.querySelector('.step[data-step="chords"] [data-mute]'), on = !!S.mute.chords;
+    b.setAttribute('aria-pressed', String(on)); b.innerHTML = on ? I.spkOff : I.spk; b.setAttribute('aria-label', on ? 'Unmute chords' : 'Mute chords'); }
+  $('chordCard').classList.toggle('muted', !!S.mute.chords);
+  $('droneNote').hidden = !S.mute.chords;
+  $('droneNote').textContent = `Chords muted. Guitar and bass both stay on ${dn}, the key’s home note.`;
   $('cxSeg').innerHTML = [['simple', 'Simple'], ['medium', 'Medium'], ['advanced', 'Advanced']].map(([k, t]) => `<button data-cx="${k}" aria-pressed="${S.cx === k}">${t}</button>`).join('');
   const n = lockedCount(), all = LAYERS().length;
   $('rollLabel').innerHTML = n === all ? 'All Kept' : n ? `Or Roll All <small>· ${n} kept</small>` : 'Or Roll All';
@@ -6984,6 +7017,7 @@ document.addEventListener('click', e => {
   }
   if (t.dataset.mute) {
     const k = t.dataset.mute; S.mute[k] = !S.mute[k]; save(); renderTools();
+    if (k === 'chords') { renderBass(); toast(S.mute.chords ? `Chords muted: guitar and bass stay on ${droneName()}.` : 'Chords back on.'); return; }
     if (S.mute[k] && ctx && sched.playing) { if (k === 'drum') mixer.fadeAll(ctx.currentTime, 0.03); else if (k === 'gtr') guitar.stopAll(ctx.currentTime); else bass.stopAll(ctx.currentTime); }
     return;
   }
@@ -7051,7 +7085,7 @@ function boot() {
   if (jam) setTimeout(() => toast('Shared jam loaded and locked. Press play.'), 400);
   else if (fresh) setTimeout(() => toast('Roll drums until you like them, then tap the lock to keep them.'), 600);
   loadAudio().catch(err => { console.error(err); toast('Could not load the sounds on this browser.'); });
-  window.__jam = { S, sched, view, rollAll, doRoll, bassBar, rollBass, get bass() { return bass; }, serialize, deserialize, org, chordAt, guitarBar, get ctx() { return ctx; }, get guitar() { return guitar; }, get mixer() { return mixer; }, get buses() { return { master, drumBus, gtrBus }; }, renderAll, start, stop, setLayer, rollStrum, rollProg, rollDrum, tplNow };
+  window.__jam = { S, sched, view, rollAll, doRoll, bassBar, rollBass, get bass() { return bass; }, serialize, deserialize, org, chordAt, guitarBar, get ctx() { return ctx; }, get guitar() { return guitar; }, get mixer() { return mixer; }, get buses() { return { master, drumBus, gtrBus, bassBus }; }, renderAll, start, stop, setLayer, rollStrum, rollProg, rollDrum, tplNow };
 }
 boot();
 })();

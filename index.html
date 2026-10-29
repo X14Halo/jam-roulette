@@ -3731,6 +3731,82 @@ i bIII iv V7 ; minor ; Verse ; latin 4 ; 1 1 1 1 ; Son ; Chan Chan (Buena Vista 
 Imaj7 II7 ii7 bII7 ; major ; Verse ; latin 4, jazz 3 ; 2 2 1 1 ; Bossa nova A section ; The Girl from Ipanema (Antonio Carlos Jobim)
 i bVII bVI ; minor ; Vamp ; latin 3, rock 2 ; 1 1 2 ; Guajeo descent ; 
 `.split('\n'));
+/* More progressions for song parts (round 3): shuffles, blues forms, rock, soul, country and more.
+   numerals ; mode ; section ; styles with weights ; bars per chord ; nickname ; songs */
+PROG_LIB.push(...`
+I7 IV7 I7 V7 IV7 I7 ; major ; Verse ; shuffle 3, blues 3 ; 2 2 2 1 1 2 ; Short blues form ;
+I7 bVII7 IV7 I7 ; major ; Verse ; shuffle 3, blues 2, rock 2 ; 1 1 1 1 ; Backdoor shuffle ;
+I7 I7 IV7 bVII7 ; major ; Verse ; shuffle 2, rock 2, blues 1 ; 1 1 1 1 ; ;
+I7 IV7 V7 IV7 ; major ; Chorus ; shuffle 3, blues 3, rock 2 ; 1 1 1 1 ; ;
+IV7 IV7 I7 I7 ; major ; Bridge ; shuffle 2, blues 2, soul 1 ; 1 1 1 1 ; Start on the four ;
+V7 IV7 V7 IV7 ; major ; Bridge ; shuffle 2, blues 2, rock 2 ; 1 1 1 1 ; Hanging on the five ;
+V7 V7 IV7 IV7 I7 I7 ; major ; Chorus ; shuffle 2, blues 2, rock 1 ; 1 1 1 1 1 1 ; The back half of a blues ;
+I bIII IV IV ; major ; Chorus ; rock 2, shuffle 2, blues 2, heavy 1 ; 1 1 1 1 ; Blues-rock climb ;
+I bIII IV bIII ; major ; Riff ; rock 3, shuffle 2, heavy 2, blues 1 ; 1 1 1 1 ; Blues-rock riff ;
+I7 bIII7 IV7 I7 ; major ; Verse ; shuffle 2, blues 2, funk 1 ; 1 1 1 1 ; ;
+I I IV IV V IV I I ; major ; Chorus ; rock 3, shuffle 3, country 2 ; 1 1 1 1 1 1 1 1 ; Rock and roll chorus ;
+I IV I IV I V IV I ; major ; Verse ; rock 3, shuffle 2, country 2 ; 1 1 1 1 1 1 1 1 ; Rockabilly verse ;
+I VI7 ii V7 ; major ; Turnaround ; shuffle 3, soul 2, jazz 2, pop 2 ; 1 1 1 1 ; ;
+I7 VI7 II7 V7 ; major ; Turnaround ; shuffle 3, blues 2, jazz 2, country 2 ; 1 1 1 1 ; Ragtime turnaround ;
+IV7 #iv° I7 VI7 ii7 V7 I7 I7 ; major ; Bridge ; shuffle 2, blues 2, jazz 2 ; 1 1 1 1 1 1 1 1 ; Diminished walk-up ;
+I I6 I7 I6 ; major ; Vamp ; shuffle 3, blues 2, rock 1, country 1 ; 1 1 1 1 ; Shuffle line ;
+I Imaj7 I7 I6 ; major ; Intro ; pop 2, soul 2, jazz 2, shuffle 1 ; 1 1 1 1 ; Line cliché ;
+i imaj7 i7 i6 ; minor ; Verse ; jazz 2, soul 2, pop 1, rock 1, latin 1 ; 1 1 1 1 ; Minor line cliché ;
+i7 bVII7 bVI7 V7 ; minor ; Verse ; blues 3, shuffle 2, rock 2, soul 1 ; 1 1 1 1 ; Minor descent to the V ;
+i7 i7 iv7 i7 bVI7 V7 i7 i7 ; minor ; Blues ; blues 3, shuffle 2, soul 1 ; 1 1 1 1 1 1 1 1 ; Minor 8-bar blues ;
+i7 iv7 i7 V7 ; minor ; Verse ; blues 3, shuffle 2, soul 1 ; 1 1 1 1 ; ;
+i iv bVII bIII ; minor ; Verse ; pop 2, rock 2, soul 1 ; 1 1 1 1 ; ;
+I I7 IV iv ; major ; Bridge ; soul 3, shuffle 2, pop 2, blues 2 ; 1 1 1 1 ; Major to minor four ;
+I III IV iv ; major ; Verse ; rock 3, pop 3, soul 1 ; 1 1 1 1 ; ; Creep (Radiohead)
+I III7 vi IV ; major ; Verse ; pop 2, soul 2, rock 2 ; 1 1 1 1 ; ;
+I II7 IV I ; major ; Verse ; rock 3, pop 2, country 1 ; 1 1 1 1 ; ; Eight Days a Week (The Beatles)
+I II IV I ; major ; Chorus ; rock 2, pop 2 ; 1 1 1 1 ; Lydian lift ;
+I IV bVII IV ; major ; Verse ; rock 3, pop 1, heavy 1 ; 1 1 1 1 ; ;
+I V bVII IV ; major ; Chorus ; rock 3, pop 2 ; 1 1 1 1 ; ;
+I bVI bVII I ; major ; Chorus ; rock 3, heavy 2, pop 1 ; 1 1 1 1 ; ;
+I bVII bVI bVII ; major ; Bridge ; rock 3, heavy 2 ; 1 1 1 1 ; ;
+I IV I bVII ; major ; Verse ; rock 3, country 1, shuffle 1 ; 1 1 1 1 ; ;
+I bVII I bVII ; major ; Riff ; rock 2, heavy 1, funk 1 ; 1 1 1 1 ; Mixolydian vamp ;
+i bVII bVI bVII ; minor ; Verse ; rock 3, heavy 2, pop 1 ; 1 1 1 1 ; ; All Along the Watchtower (Bob Dylan)
+i bVI bIII bVII ; minor ; Chorus ; pop 3, rock 3 ; 1 1 1 1 ; ;
+i bIII bVII IV ; minor ; Verse ; rock 3, soul 1, pop 1 ; 1 1 1 1 ; Dorian four ;
+i IV i IV ; minor ; Vamp ; rock 2, funk 3, latin 2, soul 2 ; 1 1 1 1 ; Dorian vamp ;
+i7 IV9 ; minor ; Vamp ; latin 4, funk 3, soul 1 ; 1 1 ; Dorian vamp ; Oye Como Va (Santana)
+i bVII ; minor ; Vamp ; rock 2, heavy 2, soul 1, latin 1 ; 1 1 ; ;
+i v ; minor ; Vamp ; rock 2, soul 2, pop 1 ; 1 1 ; ;
+i bVI ; minor ; Vamp ; rock 2, pop 2, heavy 1 ; 1 1 ; ;
+vi V IV III7 ; major ; Chorus ; rock 2, latin 2, pop 2 ; 1 1 1 1 ; Andalusian, major-key spelling ;
+IVmaj7 V7 iii7 vi ; major ; Pre-chorus ; pop 3, soul 2 ; 1 1 1 1 ; Royal road ;
+IVmaj7 iii7 ii7 Imaj7 ; major ; Verse ; soul 3, pop 2, jazz 1 ; 1 1 1 1 ; Step down ;
+ii7 iii7 IVmaj7 V ; major ; Pre-chorus ; soul 2, pop 2 ; 1 1 1 1 ; Step up ;
+Imaj7 IVmaj7 ; major ; Vamp ; soul 3, pop 2, latin 2, jazz 2 ; 1 1 ; ;
+I7 bVII7 IV7 ; major ; Riff ; funk 3, shuffle 2, rock 2 ; 1 1 2 ; ;
+i7 IV7 ; minor ; Vamp ; funk 4, soul 3 ; 1 1 ; Dorian funk vamp ;
+I9 ; major ; Vamp ; funk 4, soul 1 ; 2 ; One-chord funk ;
+i7 bIII bVII IV ; minor ; Chorus ; soul 2, funk 2, rock 2 ; 1 1 1 1 ; ;
+I I7 IV I V7 I ; major ; Verse ; country 3, shuffle 2 ; 1 1 1 1 1 1 ; ;
+I II7 V7 I ; major ; Verse ; country 3, shuffle 2, jazz 1 ; 1 1 1 1 ; Secondary dominant ;
+I III7 IV I ; major ; Verse ; country 2, soul 2, pop 1 ; 1 1 1 1 ; ;
+I V7 I IV ; major ; Verse ; country 2, rock 1, reggae 1 ; 1 1 1 1 ; ;
+IV I V7 I ; major ; Chorus ; country 2, shuffle 1, rock 1 ; 1 1 1 1 ; ;
+I IV I I V7 V7 I I ; major ; Verse ; country 3, shuffle 2 ; 1 1 1 1 1 1 1 1 ; ;
+i iv ; minor ; Vamp ; reggae 3, soul 1, funk 1 ; 1 1 ; ;
+I ii ; major ; Vamp ; reggae 3, pop 1 ; 1 1 ; ;
+ii V ; major ; Vamp ; reggae 2, funk 1, soul 1 ; 1 1 ; ;
+IV V I vi ; major ; Chorus ; reggae 2, pop 2, soul 1 ; 1 1 1 1 ; ;
+i5 bII5 i5 bVII5 ; minor ; Riff ; heavy 3 ; 1 1 1 1 ; Phrygian chug ;
+i5 bVI5 bVII5 i5 ; minor ; Verse ; heavy 3, rock 1 ; 1 1 1 1 ; ;
+I5 bVII5 bVI5 bVII5 ; major ; Chorus ; heavy 2, rock 2 ; 1 1 1 1 ; ;
+i5 iv5 v5 i5 ; minor ; Verse ; heavy 2, rock 1 ; 1 1 1 1 ; ;
+iv7 bVII7 bIIImaj7 bVImaj7 iiø7 V7 i i ; minor ; Verse ; jazz 4, latin 2 ; 1 1 1 1 1 1 1 1 ; Autumn Leaves changes ; Autumn Leaves (Joseph Kosma)
+ii7 V7 Imaj7 Imaj7 ; major ; Verse ; jazz 3, soul 1, latin 1 ; 1 1 1 1 ; ii–V–I ;
+iiø7 V7 i i ; minor ; Verse ; jazz 3, latin 2 ; 1 1 1 1 ; Minor ii–V–i ;
+I V vi V ; major ; Verse ; pop 2, rock 2, country 1 ; 1 1 1 1 ; ;
+I IV vi IV ; major ; Verse ; pop 2, rock 2 ; 1 1 1 1 ; ;
+I iii IV iv ; major ; Bridge ; pop 2, rock 2, soul 2 ; 1 1 1 1 ; ;
+vi IV V I ; major ; Chorus ; pop 2, rock 2 ; 1 1 1 1 ; ;
+I V IV V ; major ; Verse ; rock 2, pop 2, country 2 ; 1 1 1 1 ; ;
+`.split('\n'));
 
 /* ───────── Jam Roulette: chord progressions ─────────
    Every roll comes from a curated library of progressions that real songs use (PROG_LIB, written in Roman
@@ -3901,12 +3977,24 @@ function spiceList(list, key, style) {
 
 /* ---------- picking ---------- */
 const recentProg = [];
+// neighbouring styles lend their progressions at a lower weight (a shuffle can borrow a blues or rock change)
+const NEAR = {
+  shuffle: { blues: 0.8, rock: 0.2, soul: 0.15, country: 0.15 }, blues: { shuffle: 0.8, rock: 0.2, soul: 0.2 },
+  rock: { heavy: 0.4, pop: 0.4, blues: 0.3, shuffle: 0.3, country: 0.25 }, heavy: { rock: 0.5 }, pop: { rock: 0.45, soul: 0.4, country: 0.3 },
+  country: { rock: 0.25, pop: 0.2, shuffle: 0.25 }, soul: { pop: 0.4, funk: 0.4, blues: 0.3 }, funk: { soul: 0.5, latin: 0.2 },
+  reggae: { pop: 0.3, soul: 0.3 }, latin: { jazz: 0.3, funk: 0.25 }, jazz: { latin: 0.3, soul: 0.25 },
+};
+function styleW(e, style) {
+  if (e.styles[style]) return e.styles[style];
+  let w = 0; for (const [k, x] of Object.entries(NEAR[style] || {})) if (e.styles[k]) w = Math.max(w, e.styles[k] * x);
+  return w;
+}
 function chooseEntry(style, meter, avoidIds, keyMode, cx) {
-  let pool = PROGS.filter(e => e.styles[style]);
+  let pool = PROGS.filter(e => styleW(e, style) > 0);
   if (cx === 'simple') { const p2 = pool.filter(simpleOk); if (p2.length >= 4) pool = p2; }
   if (keyMode) { const p2 = pool.filter(e => e.mode === keyMode); if (p2.length >= 4) pool = p2; }
   if (meter === '3/4' || meter === '6/8') { const p2 = pool.filter(e => e.chords.length <= 8); if (p2.length) pool = p2; }
-  const w = pool.map(e => [e, e.styles[style] * (avoidIds.includes(e.id) ? 0.02 : 1) * (e.chords.length > 8 ? 0.8 : 1)]);
+  const w = pool.map(e => [e, styleW(e, style) * (avoidIds.includes(e.id) ? 0.02 : 1) * (e.chords.length > 8 ? 0.55 : 1)]);   // long forms like the 12-bar are there, just not every time
   let r = Math.random() * w.reduce((a, [, x]) => a + x, 0);
   for (const [e, x] of w) if ((r -= x) <= 0) return e;
   return w.length ? w[w.length - 1][0] : PROGS[0];
@@ -3927,7 +4015,10 @@ function simpleChord(c) {
 const MEDIUM = { '9': '7', '13': '7', '11': '7', '7s9': '7', '7b9': '7', '7alt': '7', '7b13': '7', '7s5': '7', '7s11': '7', '9s11': '7', '13b9': '7', '7b5': '7',
   m9: 'm7', m11: 'm7', m13: 'm7', maj9: 'maj7', maj13: 'maj7', maj7s11: 'maj7', maj7s5: 'maj7', '69': '6', m69: 'm6', mmaj7: 'm', '9sus4': '7sus4', '7sus2': 'sus2', dim7: 'dim', '6sus4': 'sus4', sus2sus4: 'sus4', add11: 'maj', madd11: 'm' };
 const mediumChord = c => (MEDIUM[c.q] ? vary(c, MEDIUM[c.q]) : c);
-const simpleOk = e => e.chords.every(c => { const f = T.Q[c.q].fam; return f !== 'dim' && f !== 'aug'; });
+// simple mode skips diminished/augmented changes, and line clichés (one root moving through colors) that would
+// flatten into the same chord over and over once the colors are taken out
+const simpleOk = e => e.chords.every(c => { const f = T.Q[c.q].fam; return f !== 'dim' && f !== 'aug'; })
+  && !e.chords.some((c, i) => i > 0 && c.iv === e.chords[i - 1].iv && c.q !== e.chords[i - 1].q && !(c.q === '7' || e.chords[i - 1].q === '7'));
 
 function build(entry, key, style, level, cx, spice) {
   let list = entry.chords.map(c => mk(key.tonic + c.iv, c.q, key));
@@ -3980,7 +4071,7 @@ function rhythm(entry, beatsPerBar, bpm, meter) {
   }
   return bars.map(b => b * f * beatsPerBar);
 }
-const SEC_ORDER = { Intro: 'Intro', Verse: 'Verse', 'Pre-chorus': 'Pre-chorus', Chorus: 'Chorus', Bridge: 'Bridge', Vamp: 'Vamp', Blues: 'Blues', Turnaround: 'Turnaround' };
+const SEC_ORDER = { Intro: 'Intro', Verse: 'Verse', 'Pre-chorus': 'Pre-chorus', Chorus: 'Chorus', Bridge: 'Bridge', Vamp: 'Vamp', Blues: 'Blues', Turnaround: 'Turnaround', Riff: 'Riff' };
 function roll(o) {
   const level = o.level || 'standard', cx = o.complexity || 'medium', style = o.styleId || 'rock';
   const spice = cx === 'advanced' && Math.random() < 0.5;   // advanced adds color sometimes, not every time
@@ -4260,6 +4351,155 @@ const ARCH = [
     { meters: ['6/8'], grid: 't12', bars: ['D.. D.u'], tempo: [36, 92], styles: { rock: 2, pop: 2, soul: 1, country: 1 }, tags: ['Down-ups'] }),
   A('waltzpush', 'Waltz Push', 'Down on 1, a light up, then down-up on 3.',
     { meters: ['3/4'], grid: 'e8', bars: ['D. .u Du'], tempo: [70, 170], styles: { pop: 2, rock: 1.5, country: 1.5, soul: 1 }, tags: ['Down-ups'] }),
+
+  // ---------- shuffle and triplet feels: more ideas for song parts ----------
+  A('rakestab', 'Rake and Stab', 'Rake a muted scratch on the last triplet, then stab the chord on 2 and 4.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['..x S.. ..x S..'], tempo: [56, 120], styles: { shuffle: 3.5, blues: 3, rock: 1 }, tags: ['Stabs', 'Mutes'] }),
+  A('tripupstab', 'Upbeat Shuffle Stabs', 'Short upstroke stabs on every swung &. Jump-blues horn section on guitar.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['..s ..s ..s ..s'], voicing: 'treble', tempo: [60, 130], styles: { shuffle: 3, blues: 2, jazz: 2, reggae: 2, soul: 1 }, tags: ['Stabs', 'Offbeats', 'Top strings'] }),
+  A('tripcharleston', 'Shuffle Charleston', 'Hit on 1, again on the swung & of 2, then leave the rest of the bar empty.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['S.. ..S ... ...'], tempo: [60, 130], styles: { jazz: 2.5, shuffle: 2.5, blues: 1.5, soul: 1 }, tags: ['Stabs', 'Space'] }),
+  A('tripchuck', 'Down and Chuck', 'Ring the chord on 1 and 3, a muted chuck on 2 and 4 with a light up after each.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['D.u x.u D.u x.u'], tempo: [56, 120], styles: { shuffle: 3, country: 2.5, blues: 2, rock: 1.5 }, tags: ['Mutes', 'Down-ups'] }),
+  A('triptrain', 'Freight Train Shuffle', 'Bass note on 1 and 3, muted chucks on the shuffle in between. Johnny Cash style.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['B.x x.x F.x x.x'], tempo: [60, 130], styles: { country: 4, shuffle: 2.5, rock: 1 }, tags: ['Bass notes', 'Mutes'] }),
+  A('tripchicken', 'Shuffle Boom-Chick', 'Root on the beat, a short chop on the swung & of each beat.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['B.c F.c B.c F.c'], tempo: [60, 130], styles: { country: 3.5, shuffle: 2.5, jazz: 1 }, tags: ['Bass notes', 'Chops'] }),
+  A('trippush', 'Ring and Push', 'One big chord that rings for the bar, then push the next chord in on the last triplet.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. ... ... ..D'], push: true, tempo: [48, 110], styles: { rock: 2.5, shuffle: 2, blues: 1.5, soul: 1.5, pop: 1 }, tags: ['Let ring', 'Push'] }),
+  A('tripchugring', 'Chug, Chug, Ring', 'Two beats of palm-muted shuffle chugs, then open it up and let it ring.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['P.p P.p R.. ...'], allDown: true, tempo: [52, 115], styles: { rock: 3, heavy: 2.5, shuffle: 2, blues: 1 }, tags: ['Palm mute', 'Let ring'] }),
+  A('triphalftime', 'Half-Time Scratch', 'Muted shuffle scratches all bar, one open stab on 3 with the half-time snare.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['x.x x.x S.x x.x'], voicing: 'treble', tempo: [64, 110], styles: { shuffle: 3, soul: 2, funk: 2, rock: 1.5 }, tags: ['Mutes', 'Stabs', 'Top strings'] }),
+  A('tripgospel', 'Gospel Lift', 'Down on 1, down-up on 2, down on 3, then a rolling down-down-up into the next bar.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['D.. D.u D.. Ddu'], tempo: [44, 96], styles: { soul: 3, blues: 2, pop: 1.5, country: 1 }, tags: ['Triplets'] }),
+  A('doowop', 'Doo-Wop Triplets', 'Every triplet, all downstrokes, leaning on 2 and 4. Fifties ballad.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['ddd Ddd ddd Ddd'], allDown: true, tempo: [44, 80], styles: { soul: 3, pop: 2.5, rock: 1.5, blues: 1 }, tags: ['Triplets', 'All downs'] }),
+  A('tripswamp', 'Swamp Chug', 'Heavy palm-muted chug on the beat, a pickup chug into 2 and 4. Low and lazy.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['P.. P.p P.. P.p'], allDown: true, tempo: [52, 110], styles: { blues: 2.5, rock: 2.5, shuffle: 2, heavy: 1.5 }, tags: ['Palm mute'] }),
+  A('tripgallop', 'Triplet Gallop', 'A rolling down-down-up, then one down. Busy beat, quiet beat.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['Ddu D.. Ddu D..'], tempo: [44, 96], styles: { rock: 2, pop: 1.5, soul: 1.5, blues: 1.5, country: 1.5 }, tags: ['Triplets'] }),
+  A('trippmgallop', 'Shuffle Gallop', 'Palm-muted triplet gallop with a lighter chug in between. Tight with the kick.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['Ppp P.p Ppp P.p'], allDown: true, tempo: [48, 100], styles: { heavy: 3, rock: 2, shuffle: 1.5 }, tags: ['Palm mute', 'Triplets'] }),
+  A('tripanticip', 'Anticipated Hits', 'Stabs on the swung & of 2 and the & of 4, pushing into the next beat.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['... ..S ... ..S'], tempo: [60, 140], styles: { jazz: 2.5, shuffle: 2.5, blues: 2, soul: 1 }, tags: ['Stabs', 'Syncopated'] }),
+  A('tripcall', 'Call and Answer', 'Play a full bar of shuffle strum, then one hit and a bar of space for the singer.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['D.u D.u D.u D.u', 'S.. ... ... ...'], tempo: [52, 120], styles: { blues: 3, shuffle: 3, rock: 2, soul: 1.5 }, tags: ['Two bars', 'Space'] }),
+  A('triparp', 'Triplet Arpeggio Climb', 'Pick bass, middle, top on the triplets, ringing up the chord each beat.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['Bgb egb Fgb egb'], voicing: 'pick', tempo: [44, 84], styles: { soul: 2, pop: 2, blues: 1.5, rock: 1 }, tags: ['Fingerpicking', 'Triplets'] }),
+  A('tripskank', 'Shuffle Skank', 'Chop on 2 and 4 with a quick upstroke echo on the last triplet.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['... S.s ... S.s'], voicing: 'treble', tempo: [56, 100], styles: { reggae: 3, soul: 1.5, shuffle: 1.5 }, tags: ['Stabs', 'Top strings'] }),
+  A('triphits', 'Shuffle Hits', 'Hit on 1, on 2, then jump the gun on the last triplet of 3. Leave 4 empty.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['S.. S.. ..S ...'], allDown: true, tempo: [60, 130], styles: { shuffle: 2.5, rock: 2, blues: 2, funk: 1.5 }, tags: ['Stabs', 'Syncopated'] }),
+  A('tripstoptime', 'Stop-Time Riff', 'Da, da-da... dum, then a bar of silence. The classic stop-time blues break.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['S.. ..S ..S ...', '... ... ... ...'], allDown: true, tempo: [52, 120], styles: { blues: 3.5, shuffle: 2.5, rock: 1.5 }, tags: ['Stabs', 'Two bars', 'Space'] }),
+  A('tripupchuck', 'Chuck and Lift', 'Muted downstrokes on the beat, open upstrokes on the swung &. Funky shuffle.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['x.u x.u x.u x.u'], tempo: [60, 120], styles: { shuffle: 2.5, funk: 2, soul: 2, rock: 1 }, tags: ['Mutes', 'Down-ups'] }),
+  A('trippurdie', 'Purdie Comp', 'Ghost scratches on the shuffle with short top-string chords on 3 and the triplets after.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['x.s x.s S.s x.s'], voicing: 'treble', tempo: [64, 110], styles: { funk: 2.5, shuffle: 2.5, soul: 2, rock: 1.5 }, tags: ['Mutes', 'Top strings'] }),
+  A('triplate', 'Long Ring, Late Lift', 'Let one chord hang for three beats, then down-up into the next bar.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. ... ... D.u'], tempo: [44, 96], styles: { blues: 2, soul: 2, rock: 2, pop: 2 }, tags: ['Let ring', 'Space'] }),
+  A('tripbuild', 'Two-Bar Build', 'One bar of space with a ringing chord, then a bar of rolling triplets that builds.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. ... ... ...', 'D.u D.u Ddu Ddu'], tempo: [44, 100], styles: { rock: 2, pop: 2, soul: 1.5, blues: 1.5, shuffle: 1.5 }, tags: ['Two bars', 'Let ring'] }),
+  A('tripboogie2', 'Two-Bar Boogie', 'Root-5th to root-6th on the shuffle, with a flat-7 lick in the second bar.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['1.2 1.2 1.2 1.2', '1.2 1.3 1.2 1.2'], voicing: 'boogie', allDown: true, tempo: [48, 120], styles: { blues: 3, shuffle: 3.5, rock: 1.5, country: 1 }, tags: ['Two strings', 'Two bars'] }),
+  A('tripboogiestop', 'Boogie and Hit', 'Two beats of boogie, then a hard stab on 3 and space on 4.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['1.2 1.2 S.. ...'], voicing: 'boogie', allDown: true, tempo: [52, 120], styles: { shuffle: 3, blues: 2.5, rock: 2 }, tags: ['Two strings', 'Stabs', 'Space'] }),
+
+  // ---------- more ideas for straight grooves ----------
+  A('tresillo16', 'Sixteenth Three-Three-Two', 'Big chord on 1, then hits on the 3-3-2 sixteenths, twice per bar.',
+    { meters: ['4/4'], grid: 's16', bars: ['R..D ..D. R..D ..D.'], tempo: [64, 110], styles: { pop: 2.5, latin: 2, soul: 1.5, rock: 1 }, tags: ['Sixteenths', 'Syncopated'] }),
+  A('chugtoring', 'Bar of Chug, Bar of Ring', 'One bar of palm-muted eighths, then one big open chord that rings.',
+    { meters: ['4/4'], grid: 'e8', bars: ['Pp Pp Pp Pp', 'R. .. .. ..'], allDown: true, tempo: [90, 180], styles: { rock: 3, heavy: 2, pop: 1 }, tags: ['Palm mute', 'Let ring', 'Two bars'] }),
+  A('kickstab16', 'Stab with the Kick', 'Short hits on 1, the & of 2 and 3. Lock them to the kick drum.',
+    { meters: ['4/4'], grid: 's16', bars: ['S... ..S. S... ....'], allDown: true, tempo: [70, 124], styles: { rock: 2, funk: 2, heavy: 1.5, pop: 1 }, tags: ['Stabs', 'Space'] }),
+  A('build8', 'Eighth-Note Build', 'A bar of space with one ringing chord, then build with downstroke eighths.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R. .. .. ..', 'D. D. Dd Dd'], allDown: true, tempo: [80, 170], styles: { rock: 2.5, pop: 2.5, heavy: 1 }, tags: ['Two bars', 'Let ring'] }),
+  A('offring', 'Ring on the &', 'Skip the downbeat: let chords ring from the & of 1 and the & of 3.',
+    { meters: ['4/4'], grid: 'e8', bars: ['.R .. .R ..'], feel: 'straight', tempo: [80, 150], styles: { pop: 2, rock: 2, reggae: 1 }, tags: ['Let ring', 'Offbeats'] }),
+  A('funkstutter', 'Funk Stutter', 'Double stabs with scratches in between. Short and tight on the top strings.',
+    { meters: ['4/4'], grid: 's16', bars: ['S.Sx xS.x S.Sx xSxs'], voicing: 'treble', tempo: [84, 118], styles: { funk: 3, soul: 1 }, tags: ['Stabs', 'Mutes', 'Top strings'] }),
+  A('newwave', 'New Wave Eighths', 'Choked downstrokes on every eighth, with one left open on the & of 4.',
+    { meters: ['4/4'], grid: 'e8', bars: ['SS SS SS SD'], allDown: true, push: true, tempo: [110, 180], styles: { rock: 2, pop: 2 }, tags: ['Stabs', 'Push'] }),
+
+  // ---------- waltzes ----------
+  A('waltzoffbeat', 'Waltz Offbeats', 'Short upstroke chops on the & of every beat, top strings.',
+    { meters: ['3/4'], grid: 'e8', bars: ['.s .s .s'], voicing: 'treble', tempo: [80, 200], styles: { reggae: 2.5, jazz: 1.5, pop: 1, country: 1 }, tags: ['Offbeats', 'Top strings'] }),
+  A('waltzhits', 'Waltz Hits', 'Hard hit on 1, then push the next one in on the & of 3.',
+    { meters: ['3/4'], grid: 'e8', bars: ['S. .. .S'], allDown: true, push: true, tempo: [80, 190], styles: { rock: 2, heavy: 2, pop: 1, blues: 1 }, tags: ['Stabs', 'Push'] }),
+  A('waltzdrive', 'Waltz Drive', 'Downstroke eighths in three, leaning on the 1.',
+    { meters: ['3/4'], grid: 'e8', bars: ['Dd dd dd'], allDown: true, tempo: [90, 180], styles: { rock: 2, heavy: 1.5, pop: 1, country: 1 }, tags: ['All downs'] }),
+  A('waltzchugring', 'Waltz Chug and Ring', 'Palm-mute beats 1 and 2, then let beat 3 ring into the next bar.',
+    { meters: ['3/4'], grid: 'e8', bars: ['Pp Pp R.'], allDown: true, tempo: [90, 180], styles: { heavy: 2.5, rock: 2 }, tags: ['Palm mute', 'Let ring'] }),
+  A('waltztwobar', 'Two-Bar Waltz', 'One bar ringing, one bar of down-ups. Breathe, then move.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R. .. ..', 'D. du du'], tempo: [70, 170], styles: { pop: 2, rock: 2, country: 1.5, soul: 1.5 }, tags: ['Two bars', 'Let ring'] }),
+  A('waltzbassup', 'Waltz Bass and Chops', 'Bass note on 1, short upstroke chops on the & of 2 and 3.',
+    { meters: ['3/4'], grid: 'e8', bars: ['B. .k .k', 'F. .k .k'], tempo: [90, 190], styles: { country: 2.5, jazz: 1.5, pop: 1 }, tags: ['Bass notes', 'Chops'] }),
+  A('waltzboogie', 'Waltz Boogie', 'Root-5th and root-6th on two strings, in three. Palm-muted.',
+    { meters: ['3/4'], grid: 'e8', bars: ['12 12 12'], voicing: 'boogie', allDown: true, tempo: [90, 170], styles: { blues: 2.5, shuffle: 2.5, rock: 1.5, country: 1 }, tags: ['Two strings', 'Palm mute'] }),
+  A('waltzstop', 'Waltz Stop-Time', 'One hit, then a bar and a half of silence. Leave room for the vocal.',
+    { meters: ['3/4'], grid: 'e8', bars: ['S. .. ..', '.. .. ..'], allDown: true, tempo: [80, 190], styles: { blues: 1.5, rock: 1.5, jazz: 1, soul: 1 }, tags: ['Stabs', 'Space', 'Two bars'] }),
+  A('waltzskank16', 'Waltz Skank', 'A choked chop on the & of every beat. Reggae in three.',
+    { meters: ['3/4'], grid: 's16', bars: ['..s. ..s. ..s.'], voicing: 'treble', tempo: [60, 110], styles: { reggae: 3, soul: 1 }, tags: ['Offbeats', 'Top strings'] }),
+  A('waltzchug16', 'Waltz Gallop', 'Palm-muted gallop on every beat, in three.',
+    { meters: ['3/4'], grid: 's16', bars: ['P.pp P.pp P.pp'], allDown: true, tempo: [70, 140], styles: { heavy: 3, rock: 1.5 }, tags: ['Palm mute'] }),
+  A('waltzfunk16', 'Waltz Scratch', 'Muted scratches with stabs popping out, in three.',
+    { meters: ['3/4'], grid: 's16', bars: ['S.xx xS.x xxS.'], voicing: 'treble', tempo: [70, 120], styles: { funk: 2, soul: 1.5, pop: 1 }, tags: ['Mutes', 'Stabs'] }),
+  A('waltzsync16', 'Syncopated Waltz', 'Sixteenth strum in three that lands off the beat.',
+    { meters: ['3/4'], grid: 's16', bars: ['D..u ..du .ud.'], tempo: [60, 112], styles: { pop: 2, soul: 1.5, rock: 1, reggae: 1 }, tags: ['Sixteenths', 'Syncopated'] }),
+  A('waltzring16', 'Waltz Ring and Ride', 'Big chord on 1, then light sixteenth ups to ride it out.',
+    { meters: ['3/4'], grid: 's16', bars: ['R... ..u. .ud.'], tempo: [60, 112], styles: { pop: 2, rock: 1.5, heavy: 1, soul: 1 }, tags: ['Let ring', 'Sixteenths'] }),
+
+  // ---------- 6/8 ----------
+  A('sixjazz', 'Six-Eight Comp', 'A short chord on 1, a light one on the last eighth. Lots of air.',
+    { meters: ['6/8'], grid: 't12', bars: ['S.. ..s'], voicing: 'mid', tempo: [40, 130], styles: { jazz: 3, latin: 2, soul: 1.5 }, tags: ['Stabs', 'Middle strings'] }),
+  A('sixafro', 'Afro Six Comp', 'Short chords on 1, 3 and 5. Lock with the bell pattern.',
+    { meters: ['6/8'], grid: 't12', bars: ['S.s .s.'], voicing: 'mid', tempo: [60, 130], styles: { latin: 3, jazz: 2.5 }, tags: ['Stabs', 'Middle strings'] }),
+  A('sixanswer', 'Six-Eight Call and Answer', 'Two bars: rolling strums, then one hit and space.',
+    { meters: ['6/8'], grid: 't12', bars: ['Ddu Ddu', 'S.. ...'], tempo: [36, 92], styles: { rock: 2, soul: 2, blues: 2, pop: 1.5, country: 1.5 }, tags: ['Two bars', 'Space'] }),
+  A('sixchugring', 'Six-Eight Chug and Ring', 'Palm-muted triplet chugs, then open it up on 4.',
+    { meters: ['6/8'], grid: 't12', bars: ['Ppp R..'], allDown: true, tempo: [36, 90], styles: { heavy: 3, rock: 2 }, tags: ['Palm mute', 'Let ring'] }),
+  A('sixgospel', 'Gospel Six', 'Down on 1, a down-up on 4 with a lift on the last eighth.',
+    { meters: ['6/8'], grid: 't12', bars: ['D.u Ddu'], tempo: [40, 92], styles: { soul: 3, blues: 2, pop: 1.5, country: 1 }, tags: ['Triplets'] }),
+  A('bell128', 'Bell Pattern Strum', 'Short chords on the 12/8 bell pattern. Light hands.',
+    { meters: ['12/8', '4/4'], grid: 't12', bars: ['S.S .SS .S. S.S'], voicing: 'mid', tempo: [60, 130], styles: { latin: 3, jazz: 2, soul: 1 }, tags: ['Syncopated', 'Middle strings'] }),
+
+  // ---------- fast grooves ----------
+  A('twofeel', 'Two-Feel Comp', 'Short chords on 1 and 3 only. Let the bass walk underneath.',
+    { meters: ['4/4'], grid: 'e8', bars: ['S. .. S. ..'], voicing: 'mid', tempo: [100, 260], styles: { jazz: 3, country: 1.5, latin: 1 }, tags: ['Stabs', 'Middle strings'] }),
+  A('jazzcharleston', 'Charleston Comp', 'Hit on 1 and the & of 2, then lay out. The classic swing comp.',
+    { meters: ['4/4'], grid: 'e8', bars: ['S. .S .. ..'], voicing: 'mid', tempo: [100, 260], styles: { jazz: 3.5, shuffle: 1, latin: 1 }, tags: ['Stabs', 'Syncopated'] }),
+  A('jazzpush4', 'Push the Four', 'One hit on the & of 4, landing the next chord early.',
+    { meters: ['4/4'], grid: 'e8', bars: ['.. .. .. .S'], voicing: 'mid', push: true, tempo: [110, 260], styles: { jazz: 3, latin: 1.5 }, tags: ['Push', 'Space'] }),
+  A('jazztwobar', 'Two-Bar Comp', 'A Charleston in the first bar, a push in the second. Talk back to the soloist.',
+    { meters: ['4/4'], grid: 'e8', bars: ['S. .S .. ..', '.. S. .. .S'], voicing: 'mid', tempo: [100, 260], styles: { jazz: 3 }, tags: ['Two bars', 'Stabs'] }),
+  A('punkstops', 'Punk Stops', 'Two hard hits, rest, two more. Tight with the drummer.',
+    { meters: ['4/4'], grid: 'e8', bars: ['S. S. .. ..', 'S. S. S. ..'], allDown: true, tempo: [150, 240], styles: { heavy: 2.5, rock: 2 }, tags: ['Stabs', 'Two bars'] }),
+  A('montuno', 'Montuno Comp', 'Short chords mostly on the &s, in a two-bar Latin pattern.',
+    { meters: ['4/4'], grid: 'e8', bars: ['S. .S .S .S', '.S .S .S S.'], voicing: 'mid', feel: 'straight', tempo: [150, 220], styles: { latin: 3.5, jazz: 1 }, tags: ['Two bars', 'Offbeats'] }),
+  A('salsachops', 'Salsa Chops', 'Short chords on the & of 1, beat 3 and the & of 4.',
+    { meters: ['4/4'], grid: 'e8', bars: ['.S .. S. .S'], voicing: 'mid', feel: 'straight', tempo: [150, 220], styles: { latin: 3, funk: 1 }, tags: ['Syncopated', 'Middle strings'] }),
+  A('skapush', 'Ska Push', 'Offbeat chops, with the & of 4 left ringing into the next bar.',
+    { meters: ['4/4'], grid: 'e8', bars: ['.s .s .s .D'], voicing: 'treble', push: true, tempo: [130, 200], styles: { reggae: 3, rock: 1 }, tags: ['Offbeats', 'Push'] }),
+
+  A('jwaltz2bar', 'Jazz Waltz Two-Bar', 'Hit on 1 and the & of 3, then a lone chord on 2 of the next bar.',
+    { meters: ['3/4'], grid: 'e8', bars: ['S. .. .S', '.. S. ..'], voicing: 'mid', tempo: [90, 200], styles: { jazz: 3, latin: 1, soul: 1 }, tags: ['Two bars', 'Stabs'] }),
+  A('jwaltzanticip', 'Waltz Anticipation', 'One chord on the & of 2, pushing into beat 3.',
+    { meters: ['3/4'], grid: 'e8', bars: ['.. .S ..'], voicing: 'mid', tempo: [90, 200], styles: { jazz: 2.5, latin: 1 }, tags: ['Syncopated', 'Space'] }),
+  A('jwaltzcharleston', 'Waltz Charleston', 'Hit on 1 and the & of 1, then leave beats 2 and 3 open.',
+    { meters: ['3/4'], grid: 'e8', bars: ['S. .S ..'], voicing: 'mid', tempo: [90, 200], styles: { jazz: 2.5, latin: 1.5, pop: 1 }, tags: ['Stabs'] }),
+  A('waltzpulse', 'Waltz Pulse', 'Short, even chords on every beat, middle strings. Light and steady.',
+    { meters: ['3/4'], grid: 'e8', bars: ['S. S. S.'], voicing: 'mid', tempo: [90, 220], styles: { jazz: 2.5, country: 1.5, pop: 1 }, tags: ['Quarter notes', 'Middle strings'] }),
+  A('waltzchops16', 'Waltz One-Drop', 'Short chops on 2 and 3 only. Space on the 1.',
+    { meters: ['3/4'], grid: 's16', bars: ['.... S... S...'], voicing: 'treble', tempo: [56, 100], styles: { reggae: 3, soul: 1 }, tags: ['Stabs', 'Space'] }),
+  A('waltzdblskank', 'Waltz Double Skank', 'A quick down-up chop on 2 and on 3.',
+    { meters: ['3/4'], grid: 's16', bars: ['.... Ss.. Ss..'], voicing: 'treble', tempo: [56, 100], styles: { reggae: 3 }, tags: ['Stabs', 'Top strings'] }),
+  A('waltzsyncchug', 'Waltz Syncopated Chug', 'Palm-muted chugs on the offbeats, in three. Lock with the kick.',
+    { meters: ['3/4'], grid: 's16', bars: ['P..p ..P. p..P'], allDown: true, tempo: [70, 140], styles: { heavy: 3, rock: 1 }, tags: ['Palm mute', 'Syncopated'] }),
+  A('waltzthrash16', 'Waltz Sixteenths', 'Non-stop palm-muted sixteenths in three.',
+    { meters: ['3/4'], grid: 's16', bars: ['Pppp pppp pppp'], tempo: [70, 130], styles: { heavy: 2.5 }, tags: ['Palm mute', 'Sixteenths'] }),
+  A('waltzarp16', 'Waltz Picking', 'Rolling sixteenth picking in three, bass on each bar.',
+    { meters: ['3/4'], grid: 's16', bars: ['Bgbg egbg Fgbg'], voicing: 'pick', tempo: [54, 96], styles: { pop: 2, soul: 1.5, rock: 1.5, country: 1 }, tags: ['Fingerpicking'] }),
   // ---------- researched patterns ----------
   A("punkmutetoopen", "Punk Mute-to-Open", "Palm-muted downstroke eighths in bar one, lift the palm and let the chords open up in bar two.",
     { meters: ["4/4"], grid: 'e8', bars: ["PpPpPpPp","DdDdDdDd"], allDown: true, tempo: [140, 190], styles: {"rock":4}, tags: ["Palm mute","Two bars"], src: 'research' }),
@@ -4437,6 +4677,41 @@ const ARCH = [
     { meters: ["4/4"], grid: 'e8', bars: ["D..cF.c."], voicing: 'mid', allDown: true, tempo: [100, 140], styles: {"latin":4,"jazz":2,"pop":1}, tags: ["Bass notes"], src: 'research' }),
 
 ];
+// ---------- shuffle versions ----------
+// A swung eighth-note pattern is the same pattern played on shuffle triplets: each & lands on the last triplet.
+// So every eighth-note pattern that isn't strictly straight also works over 12/8 and triplet shuffles.
+for (const a of ARCH.slice()) {
+  if (a.grid !== 'e8' || !a.meters.includes('4/4') || a.feel === 'straight') continue;
+  const bars = a.bars.map(b => b.replace(/\s+/g, '').replace(/(.)(.)/g, '$1.$2 ').trim());
+  ARCH.push({ ...a, id: a.id + '~3', grid: 't12', meters: ['4/4', '12/8'], bars, feel: 'triplet', tempo: [Math.round(a.tempo[0] * 0.6), a.tempo[1]], derived: true });
+}
+// 12/8 and 4/4 on triplets are the same bar of twelve triplets
+for (const a of ARCH) if (a.grid === 't12' && (a.meters.includes('12/8') || a.meters.includes('4/4'))) a.meters = [...new Set([...a.meters, '4/4', '12/8'])];
+// ...and a bar of 12/8 is two bars of 6/8: split twelve-triplet patterns for 6/8 grooves, double 6/8 patterns up for 12/8
+const baseId = id => id.replace(/~\d+$/, '');
+for (const a of ARCH.slice()) {
+  if (a.grid !== 't12') continue;
+  const flat = a.bars.map(b => b.replace(/\s+/g, ''));
+  if (a.meters.includes('12/8') && !a.meters.includes('6/8')) {
+    let bars = []; flat.forEach(b => bars.push(b.slice(0, 6), b.slice(6)));
+    if (bars.length === 2 && bars[0] === bars[1]) bars = [bars[0]];
+    if (!bars.some(b => /[^.]/.test(b) && b.length === 6)) continue;
+    ARCH.push({ ...a, id: baseId(a.id) + '~6', meters: ['6/8'], bars, derived: true });
+  } else if (a.meters.length === 1 && a.meters[0] === '6/8') {
+    const bars = flat.length === 1 ? [flat[0] + flat[0]] : flat.length % 2 ? flat.map(b => b + b) : flat.filter((_, i) => i % 2 === 0).map((b, i) => b + flat[i * 2 + 1]);
+    ARCH.push({ ...a, id: baseId(a.id) + '~12', meters: ['12/8', '4/4'], bars, derived: true });
+  }
+}
+// Sparse patterns (one stroke a beat or less) stay playable at fast tempos, so fast grooves get them too
+for (const a of ARCH) {
+  const beats = a.bars.reduce((n, b) => n + b.replace(/\s+/g, '').length, 0) / GRID[a.grid];
+  const strokes = a.bars.reduce((n, b) => n + b.replace(/[\s.]/g, '').length, 0);
+  const per = strokes / beats;
+  // and slow grooves can take anything that isn't a fast pattern by nature
+  if (a.tempo[0] <= 96) a.tempo = [Math.min(a.tempo[0], a.grid === 'e8' ? 62 : 52), a.tempo[1]];
+  if (per <= 1) a.tempo = [a.tempo[0], Math.max(a.tempo[1], 260)];
+  else if (per <= 1.5 && a.grid !== 's16') a.tempo = [a.tempo[0], Math.max(a.tempo[1], 215)];
+}
 const BY_ID = Object.fromEntries(ARCH.map(a => [a.id, a]));
 
 // ---------- parsing ----------
@@ -4479,7 +4754,7 @@ for (const a of ARCH) for (const m of a.meters) for (const b of a.bars) {
 function gridsFor(tpl, bpm, swing) {
   const m = tpl.meter;
   if (m === '6/8' || m === '12/8' || tpl.sub === 3) return ['t12'];
-  if (tpl.sub === 2) return swing < 0.12 && bpm <= 124 ? ['e8', 's16'] : ['e8'];   // straight eighths take a sixteenth strum too
+  if (tpl.sub === 2) return swing < 0.12 && bpm <= 124 ? ['e8', 's16'] : swing >= 0.6 ? ['e8', 't12'] : ['e8'];   // straight eighths take sixteenths, a hard swing takes triplets
   return bpm <= 128 ? ['e8', 's16'] : ['e8'];
 }
 const feelOf = (tpl, swing) => (tpl.sub === 3 || tpl.meter === '6/8' || tpl.meter === '12/8' ? 'triplet' : swing > 0.12 ? 'swing' : 'straight');
@@ -4489,6 +4764,7 @@ function fits(a, tpl, bpm, swing, loose) {
   if (!gridsFor(tpl, bpm, swing).includes(a.grid)) return 0;
   if (a.feel === 'straight' && feelOf(tpl, swing) === 'swing') return 0;
   if (a.feel === 'swing' && feelOf(tpl, swing) !== 'swing') return 0;
+  if (a.feel === 'triplet' && feelOf(tpl, swing) !== 'triplet') return 0;
   const [lo, hi] = a.tempo;
   if (bpm >= lo && bpm <= hi) return 1;
   const d = bpm < lo ? (lo - bpm) / lo : (bpm - hi) / hi;
@@ -4504,13 +4780,36 @@ function weighted(rnd, list) {
   return list[list.length - 1][0];
 }
 
+// Neighbouring styles lend their patterns at a lower weight (a shuffle can borrow a blues or rock rhythm)
+const NEAR = {
+  shuffle: { blues: 0.85, rock: 0.45, country: 0.4, soul: 0.4, jazz: 0.35, heavy: 0.3, funk: 0.25, pop: 0.25, reggae: 0.15 },
+  blues: { shuffle: 0.85, rock: 0.45, soul: 0.45, country: 0.35, jazz: 0.3, funk: 0.25, heavy: 0.25, pop: 0.2 },
+  rock: { heavy: 0.5, pop: 0.5, blues: 0.35, shuffle: 0.3, country: 0.3, soul: 0.2, funk: 0.2 },
+  heavy: { rock: 0.6, blues: 0.2, shuffle: 0.2 },
+  pop: { rock: 0.5, soul: 0.45, country: 0.35, reggae: 0.2, funk: 0.2, latin: 0.15 },
+  country: { rock: 0.35, shuffle: 0.35, pop: 0.35, blues: 0.3 },
+  soul: { funk: 0.5, pop: 0.45, blues: 0.35, shuffle: 0.3, jazz: 0.3, reggae: 0.2 },
+  funk: { soul: 0.55, latin: 0.25, rock: 0.2, pop: 0.2, jazz: 0.2 },
+  reggae: { soul: 0.3, funk: 0.25, pop: 0.2, latin: 0.2 },
+  latin: { jazz: 0.35, funk: 0.3, reggae: 0.2, soul: 0.2, pop: 0.15 },
+  jazz: { latin: 0.3, soul: 0.3, blues: 0.3, shuffle: 0.3, funk: 0.2 },
+};
+function styleWeight(a, style) {
+  if (a.styles[style]) return a.styles[style];
+  const n = NEAR[style] || {}; let w = 0;
+  for (const [k, x] of Object.entries(a.styles)) if (n[k]) w = Math.max(w, x * n[k]);
+  return w;
+}
+const recent = [];   // the last few patterns rolled, so a roll doesn't keep landing on the same handful
 function candidates(tpl, bpm, swing, styleId, avoid) {
   const style = styleId || tpl.style;
   for (const pass of [0, 1, 2]) {
     const list = ARCH.map(a => {
       const f = fits(a, tpl, bpm, swing, pass >= 1);
-      const sw = a.styles[style] ?? (pass === 2 ? 0.4 : 0);
-      return [a, f * sw * (a.id === avoid ? 0.04 : 1)];
+      const sw = styleWeight(a, style) || (pass === 2 ? 0.4 : 0);
+      const base = baseId(a.id);
+      const rec = recent.some(r => baseId(r) === base) ? 0.1 : 1;
+      return [a, f * sw * (a.derived ? 0.8 : 1) * rec * (a.id === avoid ? 0.04 : 1)];
     }).filter(([, w]) => w > 0);
     if (list.length) return list;
   }
@@ -4532,6 +4831,7 @@ function roll(o, rnd = Math.random) {
   const tpl = o.tpl, bpm = o.bpm, swing = o.swing || 0;
   const cands = candidates(tpl, bpm, swing, tpl.style, o.avoid);
   const a = cands.length ? weighted(rnd, cands) : BY_ID.faithful;
+  recent.push(a.id); if (recent.length > 8) recent.shift();
   return build(a, o, rnd);
 }
 
@@ -5341,7 +5641,7 @@ function guitarBar(bar) {
     if (tie && e.i === 0) continue;
     const t = e.i * tick;
     const ch = e.push ? chordAt(bar + 1, 0) : chordAt(bar, t / TPB);
-    out.push({ t, e, notes: Strum.stringsFor(ch.c.shape, e, st.voicing, ch.c.root), key: ch.key });
+    out.push({ t, e, notes: Strum.stringsFor(ch.c.shape, e, st.voicing, ch.c.root), key: ch.key, trip: st.per === 3 });
   }
   return out;
 }
@@ -5419,7 +5719,7 @@ function scheduleBeat() {
   }
   if (!S.mute.gtr) for (const g of cur.gtr) {
     if (g.t < b0 || g.t >= b0 + TPB) continue;
-    const w = warpBeat((g.t - b0) / TPB, tpl.sub, ratio, false);
+    const w = warpBeat((g.t - b0) / TPB, tpl.sub, ratio, g.trip);   // triplet strums sit on true triplets, even over a swung beat
     const time = Math.max(ctx.currentTime + 0.005, sched.next + w * dur + 0.004 + gauss() * 0.003);
     guitar.stroke(g.e, g.notes, time, g.key, dur);
   }

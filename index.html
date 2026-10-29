@@ -33,6 +33,7 @@
   --drums: #FF5A36;
   --strum: #2F7BF6;
   --chords: #1FA463;
+  --bass: #E0457B;
   --modes: #8E5BE8;
   --star: #FF9F0A;
   --on: #34C759;
@@ -47,14 +48,14 @@
     color-scheme: dark;
     --bg: #000000; --card: #1C1C1E; --card-2: #242427; --ink: #F2F2F7; --ink-2: #9A9AA1; --ink-3: #636369;
     --line: rgba(84, 84, 88, 0.42); --line-2: rgba(84, 84, 88, 0.7); --fill: rgba(118, 118, 128, 0.22); --fill-2: rgba(118, 118, 128, 0.32);
-    --shadow: none; --drums: #FF6B4A; --strum: #4A8DFF; --chords: #30C47A; --modes: #A47CF2; --star: #FFB340; --on: #30D158; --tint-a: 0.2; --bar: #111113;
+    --shadow: none; --drums: #FF6B4A; --strum: #4A8DFF; --chords: #30C47A; --bass: #FF5C93; --modes: #A47CF2; --star: #FFB340; --on: #30D158; --tint-a: 0.2; --bar: #111113;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #000000; --card: #1C1C1E; --card-2: #242427; --ink: #F2F2F7; --ink-2: #9A9AA1; --ink-3: #636369;
   --line: rgba(84, 84, 88, 0.42); --line-2: rgba(84, 84, 88, 0.7); --fill: rgba(118, 118, 128, 0.22); --fill-2: rgba(118, 118, 128, 0.32);
-  --shadow: none; --drums: #FF6B4A; --strum: #4A8DFF; --chords: #30C47A; --modes: #A47CF2; --star: #FFB340; --on: #30D158; --tint-a: 0.2; --bar: #111113;
+  --shadow: none; --drums: #FF6B4A; --strum: #4A8DFF; --chords: #30C47A; --bass: #FF5C93; --modes: #A47CF2; --star: #FFB340; --on: #30D158; --tint-a: 0.2; --bar: #111113;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -89,7 +90,8 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 .steps { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 2px 12px 2px 14px; }
 .step { --c: var(--ink); display: flex; align-items: center; gap: 8px; min-height: 68px; border-top: 0.5px solid var(--line); }
 .step:first-child { border-top: 0; }
-.step.drums { --c: var(--drums); } .step.strum { --c: var(--strum); } .step.chords { --c: var(--chords); }
+.step.drums { --c: var(--drums); } .step.strum { --c: var(--strum); } .step.chords { --c: var(--chords); } .step.bass { --c: var(--bass); }
+.step.bass .opt { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); margin-left: 6px; vertical-align: 1px; }
 .step .num { width: 28px; height: 28px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 15px; font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) calc(var(--tint-a) * 100%), transparent); transition: background .2s, color .2s; }
 .step.kept .num { background: var(--c); color: #fff; }
 .step-txt { flex: 1; min-width: 0; }
@@ -127,6 +129,15 @@ button { font: inherit; color: inherit; border: 0; background: none; padding: 0;
 .card.drums { --c: var(--drums); }
 .card.strum { --c: var(--strum); }
 .card.chords { --c: var(--chords); }
+.card.bass { --c: var(--bass); }
+.rel { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 10px; }
+.rel span { font-size: 12.5px; font-weight: 650; padding: 4px 10px; border-radius: 99px; background: color-mix(in srgb, var(--bass) calc(var(--tint-a) * 100%), transparent); color: var(--bass); }
+.bs-pill { fill: var(--bass); }
+.bs-pill.pass { fill: color-mix(in srgb, var(--bass) 50%, var(--ink-3)); }
+.bs-pill.soft { opacity: .45; }
+.bs-glyph { fill: #fff; font-size: 10.5px; font-weight: 800; }
+.bs-x { stroke: var(--ink-2); stroke-width: 2.2; stroke-linecap: round; }
+.bs-floor { stroke: var(--line-2); stroke-width: 1; stroke-dasharray: 2 3; }
 .card.chal { --c: var(--modes); }
 .card.locked { box-shadow: var(--shadow), inset 0 0 0 2px color-mix(in srgb, var(--c) 55%, transparent); }
 .head { display: flex; align-items: center; gap: 10px; min-height: 26px; }
@@ -377,9 +388,16 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
     <div class="step chords" data-step="chords">
       <span class="num">3</span>
       <div class="step-txt"><b>Roll Chords</b><span id="stepChords"></span></div>
-      <button class="tool mute" data-mute="bass" aria-pressed="true" aria-label="Bass"></button>
+      <button class="tool mute" hidden aria-hidden="true" tabindex="-1"></button>
       <button class="tool lock" data-lock="chords" aria-pressed="false" aria-label="Keep chords"></button>
       <button class="tool dice" data-roll="chords" aria-label="Roll new chords"></button>
+    </div>
+    <div class="step bass" data-step="bass">
+      <span class="num">4</span>
+      <div class="step-txt"><b>Roll Bass Line</b><span id="stepBass"></span></div>
+      <button class="tool mute" data-mute="bass" aria-pressed="false" aria-label="Mute bass"></button>
+      <button class="tool lock" data-lock="bass" aria-pressed="false" aria-label="Keep bass line"></button>
+      <button class="tool dice" data-roll="bass" aria-label="Roll a bass line"></button>
     </div>
     <div class="cx"><span>Chord level</span><div class="seg" id="cxSeg" role="group" aria-label="Chord level"></div></div>
   </section>
@@ -416,8 +434,19 @@ input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 
       <div class="tiles" id="tiles"></div>
       <div class="form" id="form" hidden></div>
       <p class="like" id="like"></p>
-      <div class="mix" id="mixB"><button class="mbtn" data-mute="bass" aria-pressed="true" aria-label="Bass"></button><input type="range" id="volB" min="0" max="100" aria-label="Bass volume"><small id="volBTxt"></small></div>
-      <p class="mixnote">Bass plays the chord roots with the kick. Off by default so your bass player has the room.</p>
+    </div>
+  </section>
+
+  <section class="card bass" id="bassCard" hidden>
+    <div class="head">
+      <div class="label"><i></i>Bass<span id="bassKey"></span></div>
+    </div>
+    <div id="bassBody">
+      <h2 class="name" id="bassName"></h2>
+      <div class="rel" id="bassRel"></div>
+      <div class="grid" id="bassGrid"></div>
+      <p class="tip" id="bassTip"></p>
+      <div class="mix" id="mixB"><button class="mbtn" data-mute="bass" aria-pressed="false" aria-label="Mute bass"></button><input type="range" id="volB" min="0" max="100" aria-label="Bass volume"><small id="volBTxt"></small></div>
     </div>
   </section>
 
@@ -4682,6 +4711,7 @@ const ARCH = [
 // So every eighth-note pattern that isn't strictly straight also works over 12/8 and triplet shuffles.
 for (const a of ARCH.slice()) {
   if (a.grid !== 'e8' || !a.meters.includes('4/4') || a.feel === 'straight') continue;
+  if ((a.styles.latin || 0) >= Math.max(...Object.values(a.styles))) continue;   // Latin rhythms stay straight
   const bars = a.bars.map(b => b.replace(/\s+/g, '').replace(/(.)(.)/g, '$1.$2 ').trim());
   ARCH.push({ ...a, id: a.id + '~3', grid: 't12', meters: ['4/4', '12/8'], bars, feel: 'triplet', tempo: [Math.round(a.tempo[0] * 0.6), a.tempo[1]], derived: true });
 }
@@ -4801,7 +4831,7 @@ function styleWeight(a, style) {
   return w;
 }
 const recent = [];   // the last few patterns rolled, so a roll doesn't keep landing on the same handful
-function candidates(tpl, bpm, swing, styleId, avoid) {
+function candidates(tpl, bpm, swing, styleId, avoid, extra) {
   const style = styleId || tpl.style;
   for (const pass of [0, 1, 2]) {
     const list = ARCH.map(a => {
@@ -4809,7 +4839,7 @@ function candidates(tpl, bpm, swing, styleId, avoid) {
       const sw = styleWeight(a, style) || (pass === 2 ? 0.4 : 0);
       const base = baseId(a.id);
       const rec = recent.some(r => baseId(r) === base) ? 0.1 : 1;
-      return [a, f * sw * (a.derived ? 0.8 : 1) * rec * (a.id === avoid ? 0.04 : 1)];
+      return [a, f * sw * (a.derived ? 0.8 : 1) * rec * (a.id === avoid ? 0.04 : 1) * (extra && f * sw > 0 ? extra(a) : 1)];
     }).filter(([, w]) => w > 0);
     if (list.length) return list;
   }
@@ -4829,10 +4859,23 @@ function compatible(strum, tpl, bpm, swing) {
  */
 function roll(o, rnd = Math.random) {
   const tpl = o.tpl, bpm = o.bpm, swing = o.swing || 0;
-  const cands = candidates(tpl, bpm, swing, tpl.style, o.avoid);
+  // with a bass line already playing, the strum sometimes rides its rhythm, sometimes plays around it,
+  // and sometimes does its own thing (the bass follows the chords, so none of these clash)
+  let extra = null, rel = null;
+  if (o.bass && o.bass.ticks && o.bass.ticks.length) {
+    const bt = o.bass.ticks;
+    rel = o.bass.rel || weighted(rnd, [['follow', 0.35], ['around', 0.3], ['own', 0.35]]);
+    const hits = a => { const per = GRID[a.grid]; return [...a.bars[0].replace(/\s+/g, '')].map((c, i) => (c !== '.' && c !== 'x' && c !== '_' ? Math.round(i * TPB / per) : -1)).filter(t => t >= 0); };
+    const q = t => Math.round(t / 3);
+    if (rel === 'follow') extra = a => { const A = new Set(hits(a).map(q)), B = new Set(bt.map(q)); const inter = [...A].filter(x => B.has(x)).length; return 0.15 + 4 * Math.pow(inter / (new Set([...A, ...B]).size || 1), 1.5); };
+    else if (rel === 'around') extra = a => { const h = hits(a).filter(t => t > 0), B = new Set(bt.map(q)); if (!h.length) return 1; const ov = h.filter(t => B.has(q(t))).length / h.length; return 0.15 + 3 * Math.pow(1 - ov, 2); };
+  }
+  const cands = candidates(tpl, bpm, swing, tpl.style, o.avoid, extra);
   const a = cands.length ? weighted(rnd, cands) : BY_ID.faithful;
   recent.push(a.id); if (recent.length > 8) recent.shift();
-  return build(a, o, rnd);
+  const st = build(a, o, rnd);
+  if (rel === 'follow' || rel === 'around') st.rel = rel;
+  return st;
 }
 
 function build(a, o, rnd) {
@@ -5016,6 +5059,417 @@ window.Strum = { closest, features, ARCH, BY_ID, roll, build, compatible, gridsF
 
 </script>
 <script>
+// ===== Jam Roulette bass lines (pure, no audio) =====
+// A bass line is a rhythm of scale degrees, not fixed notes: "root on 1, fifth on the & of 2, step into the
+// next chord". The app turns the degrees into notes against whatever chord is playing at that moment, so a
+// kept bass line follows any chord progression, and a new progression never leaves it clashing.
+//
+// Letters, one per slot (spaces only for reading):
+//   R r  root (accented / normal)       s   root, slid into from below
+//   5    fifth                           L   fifth below the root
+//   8    octave                          3   the chord's third (or the key's, over a power chord)
+//   7    seventh (flat 7 in bluesy lines) 6 2 4  sixth, second, fourth (from the key)
+//   a A  half step below / above the next note (chromatic approach)
+//   w    scale step into the next note   N   the next bar's root, played early
+//   P    pedal: the key's home note      x   dead note (muted thump)     g  ghost root (quiet, short)
+//   _    stop: silence                   .   nothing new, the last note keeps ringing
+(() => {
+'use strict';
+const GRID = { e8: 2, s16: 4, t12: 3 };
+const METER_BEATS = { '4/4': 4, '3/4': 3, '6/8': 2, '12/8': 4 };
+const TPB = 12;
+const A = (id, name, tip, o) => ({ id, name, tip, stac: 0, smooth: false, bluesy: false, ...o });
+const LETTERS = /^[Rrs5L837624aAwNPxg_.]+$/;
+
+const ARCH = [
+  // ---------- 4/4 eighths ----------
+  A('rootdrive', 'Root Eighths', 'Root note on every eighth, all downstrokes. Sit right on the kick and don’t move.',
+    { meters: ['4/4'], grid: 'e8', bars: ['Rrrr rrrr'], tempo: [90, 210], styles: { rock: 3, heavy: 3, pop: 2, country: 0.5 }, tags: ['Eighths', 'Roots'] }),
+  A('rootquarters', 'Quarter-Note Roots', 'The root on every beat. Simple, steady, and it always works.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.r. r.r.'], tempo: [60, 190], styles: { pop: 2.5, rock: 2.5, soul: 1.5, country: 1.5, blues: 1, reggae: 0.5 }, tags: ['Roots'] }),
+  A('twobeat', 'Two-Beat Root-Fifth', 'Root on 1, fifth on 3. The country two-beat.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R... 5...'], tempo: [80, 240], styles: { country: 4, jazz: 1.5, pop: 1, shuffle: 1 }, tags: ['Root-fifth'] }),
+  A('rootfifthq', 'Root-Fifth Bounce', 'Root, fifth, root, fifth on the beats.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.5. R.5.'], tempo: [80, 200], styles: { country: 3, pop: 1.5, rock: 1, latin: 0.5 }, tags: ['Root-fifth'] }),
+  A('octaves8', 'Octave Bounce', 'Jump between the root and its octave on every eighth. Keep it short and bouncy.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R8R8 R8R8'], stac: 0.6, tempo: [100, 180], styles: { pop: 2, rock: 1.5, funk: 1.5, soul: 1 }, tags: ['Octaves'] }),
+  A('boogie8', 'Boogie Walk', 'Root, 3rd, 5th, 6th, flat 7, then back down. The classic boogie bass.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R356 7653'], bluesy: true, tempo: [80, 190], styles: { blues: 4, shuffle: 4, rock: 2, country: 1.5, jazz: 0.5 }, tags: ['Walking'] }),
+  A('boogie4', 'Quarter-Note Boogie', 'Walk up root, 3rd, 5th, 6th, then flat 7 back down, one note a beat.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.3. 5.6.', '7.6. 5.3.'], bluesy: true, tempo: [70, 180], styles: { blues: 3, shuffle: 3, country: 2, rock: 1.5, reggae: 1 }, tags: ['Walking', 'Two bars'] }),
+  A('soulpocket', 'Soul Pocket', 'Root on 1, again on the & of 2, fifth on 4, then a half step into the next bar.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R..r ..5a'], tempo: [70, 130], styles: { soul: 3, pop: 2, funk: 1, rock: 1 }, tags: ['Syncopated', 'Approach'] }),
+  A('pushbass', 'Push into the Change', 'Steady roots, then hit the next chord’s root early on the & of 4.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.r. r..N'], tempo: [80, 170], styles: { rock: 2.5, pop: 2.5, country: 1 }, tags: ['Push'] }),
+  A('heartbeat', 'Heartbeat', 'Dum... da-dum. A dotted quarter, then an eighth, then let it ring.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R..r ....'], tempo: [60, 140], styles: { pop: 2, rock: 2, country: 1, soul: 1 }, tags: ['Space'] }),
+  A('tresillobass', 'Three-Three-Two', 'Root, fifth, root on the 3-3-2 rhythm.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R..5 ..r.'], feel: 'straight', tempo: [70, 150], styles: { pop: 3, latin: 2, reggae: 1, rock: 1, country: 1 }, tags: ['Syncopated'] }),
+  A('walkchange', 'Walk to the Change', 'Root, fifth, octave, then a half step into the next chord.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.5. 8.a.'], tempo: [70, 170], styles: { country: 2, rock: 1.5, pop: 1.5, soul: 1.5, blues: 1 }, tags: ['Approach'] }),
+  A('pedalq', 'Pedal Tone', 'Stay on the key’s home note while the chords move above you. Builds tension.',
+    { meters: ['4/4'], grid: 'e8', bars: ['P.P. P.P.'], tempo: [60, 190], styles: { rock: 2, pop: 1.5, heavy: 1.5 }, tags: ['Pedal'] }),
+  A('pedal8', 'Pedal Eighths', 'Pump the key’s home note in eighths under every chord.',
+    { meters: ['4/4'], grid: 'e8', bars: ['PPPP PPPP'], tempo: [90, 200], styles: { heavy: 2, rock: 1.5, pop: 1 }, tags: ['Pedal', 'Eighths'] }),
+  A('wholenotes', 'Whole Notes', 'One long root per bar. Leave all the space to the band.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R... ....'], tempo: [56, 160], styles: { pop: 2, rock: 1.5, soul: 1.5, country: 1, heavy: 1, reggae: 0.5, blues: 0.5 }, tags: ['Space'] }),
+  A('halfnotes', 'Half Notes', 'Root on 1, octave on 3. Big and simple.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R... 8...'], tempo: [56, 160], styles: { pop: 1.5, rock: 1.5, soul: 1, heavy: 1 }, tags: ['Space', 'Octaves'] }),
+  A('tumbao', 'Tumbao', 'Skip the 1. Fifth on the & of 2, then the next chord’s root early on 4.',
+    { meters: ['4/4'], grid: 'e8', bars: ['_..5 ..N.'], feel: 'straight', tempo: [80, 220], styles: { latin: 3.5, jazz: 1 }, tags: ['Syncopated', 'Push'] }),
+  A('bossabass', 'Bossa Bass', 'Root on 1, fifth on the & of 2 and on 3.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R..5 5...'], feel: 'straight', tempo: [100, 160], styles: { latin: 3, jazz: 1.5 }, tags: ['Root-fifth'] }),
+  A('cumbiabass', 'Cumbia Bass', 'Root on 1, fifth on 3, and a fifth again on the & of 4.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R... 5..5'], feel: 'straight', tempo: [80, 120], styles: { latin: 2.5, reggae: 0.5 }, tags: ['Root-fifth'] }),
+  A('walking', 'Walking Bass', 'One note a beat: root, chord tones, then a half step into the next chord.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.3. 5.a.', 'R.5. 8.a.'], smooth: true, tempo: [80, 260], styles: { jazz: 4, shuffle: 2, blues: 2, country: 1 }, tags: ['Walking', 'Two bars'] }),
+  A('walkdown', 'Walking Down', 'Start on the root, walk down from the octave, then slide in from a half step.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.8. 7.a.', 'R.2. 3.a.'], smooth: true, tempo: [80, 260], styles: { jazz: 3, shuffle: 1.5, blues: 1.5 }, tags: ['Walking', 'Two bars'] }),
+  A('walkscale', 'Scale Walk', 'Root, 2nd, 3rd, then a scale step into the next chord.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.2. 3.w.'], smooth: true, tempo: [80, 240], styles: { jazz: 2.5, country: 2, shuffle: 1.5, pop: 0.5 }, tags: ['Walking'] }),
+  A('onedropbass', 'One-Drop Bass', 'Leave beat 1 empty. Root on 2, fifth on 3, octave on 4.',
+    { meters: ['4/4'], grid: 'e8', bars: ['_.R. 5.8.'], tempo: [60, 110], styles: { reggae: 3 }, tags: ['Space'] }),
+  A('skawalk', 'Ska Walk', 'Walk up and back down one note a beat, light and quick.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.3. 5.6.', '8.6. 5.3.'], stac: 0.7, tempo: [120, 210], styles: { reggae: 2.5, rock: 0.5 }, tags: ['Walking', 'Two bars'] }),
+  A('offroots', 'Offbeat Roots', 'Short roots on every &, leaving the beats to the kick.',
+    { meters: ['4/4'], grid: 'e8', bars: ['.r.r .r.r'], stac: 0.5, tempo: [100, 200], styles: { reggae: 1.5, pop: 1, rock: 1 }, tags: ['Offbeats'] }),
+  A('fifthriff', 'Fifth and Octave Riff', 'Root, root-fifth, octave, fifth. A little riff that repeats.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R.r5 .8.5'], tempo: [80, 170], styles: { rock: 2, heavy: 1.5, blues: 1, funk: 0.5 }, tags: ['Riff'] }),
+  A('stopbass', 'Stop-Time', 'One note, then lay out for a bar. Let the space hit.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R... ....', '_... ....'], tempo: [60, 200], styles: { blues: 2.5, shuffle: 2, rock: 1.5, funk: 1 }, tags: ['Space', 'Two bars'] }),
+  A('chromclimb', 'Chromatic Climb', 'Hold the root, then climb a scale step and a half step into the next chord.',
+    { meters: ['4/4'], grid: 'e8', bars: ['R... r.wa'], tempo: [70, 170], styles: { rock: 2, pop: 1.5, soul: 1.5, blues: 1, country: 1 }, tags: ['Approach'] }),
+  A('rockgallop8', 'Root-Octave Drive', 'Eighth-note roots with an octave jump on 2 and 4.',
+    { meters: ['4/4'], grid: 'e8', bars: ['Rr8r Rr8r'], tempo: [100, 200], styles: { rock: 2, pop: 1.5, heavy: 1 }, tags: ['Eighths', 'Octaves'] }),
+
+  // ---------- 4/4 sixteenths ----------
+  A('funkone', 'Funk on the One', 'Hit the 1 hard, then syncopated roots, a dead note, the flat 7 and a pickup.',
+    { meters: ['4/4'], grid: 's16', bars: ['R..r .x7. ..R. 8.5a'], bluesy: true, stac: 0.7, tempo: [80, 120], styles: { funk: 4, soul: 1 }, tags: ['Syncopated', 'Dead notes'] }),
+  A('funkoct', 'Octave Pops', 'Root, octave and a dead note on every beat. Short and snappy.',
+    { meters: ['4/4'], grid: 's16', bars: ['R.8x R.8x R.8x R.8x'], stac: 0.5, tempo: [84, 124], styles: { funk: 3, soul: 1.5, pop: 1 }, tags: ['Octaves', 'Dead notes'] }),
+  A('disco', 'Disco Octaves', 'Root on the beat, octave on the &, the whole way.',
+    { meters: ['4/4'], grid: 's16', bars: ['R.8. R.8. R.8. R.8.'], stac: 0.55, tempo: [100, 132], styles: { funk: 2, pop: 2, soul: 2 }, tags: ['Octaves'] }),
+  A('sparsefunkbass', 'Sparse Funk', 'Root on 1, a root on the & of 2 and on 3. Lots of air.',
+    { meters: ['4/4'], grid: 's16', bars: ['R... ..r. R... ....'], stac: 0.6, tempo: [80, 120], styles: { funk: 3, soul: 1.5 }, tags: ['Space', 'Syncopated'] }),
+  A('syncroots', 'Syncopated Roots', 'Roots that land just after the beat, with a fifth to finish the bar.',
+    { meters: ['4/4'], grid: 's16', bars: ['R..r ..r. R..r ..5.'], tempo: [64, 124], styles: { pop: 2.5, rock: 2, soul: 2 }, tags: ['Syncopated'] }),
+  A('gallopbass', 'Gallop', 'An eighth and two sixteenths on every beat. Lock with the kick.',
+    { meters: ['4/4'], grid: 's16', bars: ['R.rr R.rr R.rr R.rr'], tempo: [90, 170], styles: { heavy: 3, rock: 1 }, tags: ['Gallop'] }),
+  A('sixteenthroots', 'Sixteenth Roots', 'Non-stop sixteenth roots. Keep the picking hand even.',
+    { meters: ['4/4'], grid: 's16', bars: ['rrrr rrrr rrrr rrrr'], tempo: [70, 130], styles: { heavy: 2.5, rock: 0.5 }, tags: ['Sixteenths'] }),
+  A('ghostgroove', 'Ghost-Note Groove', 'Roots with quiet ghost notes in between, a fifth and a pickup at the end.',
+    { meters: ['4/4'], grid: 's16', bars: ['R.gg r.g. R.gg 5.a.'], tempo: [76, 116], styles: { funk: 2.5, soul: 2 }, tags: ['Ghost notes'] }),
+  A('rootsreggae', 'Roots Reggae Line', 'Skip the 1, then a melodic line: root, fifth, octave, seventh, fifth.',
+    { meters: ['4/4'], grid: 's16', bars: ['_..R ..5. 8.7. 5...'], tempo: [56, 100], styles: { reggae: 3 }, tags: ['Melodic', 'Space'] }),
+  A('steppersbass', 'Steppers', 'Root on every beat with a quick pickup before the next.',
+    { meters: ['4/4'], grid: 's16', bars: ['R..r R..r R..r R..r'], tempo: [60, 100], styles: { reggae: 2.5, pop: 1 }, tags: ['Roots'] }),
+  A('neosoulbass', 'Neo-Soul Line', 'Root, then lazy chord tones that land between the beats.',
+    { meters: ['4/4'], grid: 's16', bars: ['R... ..3. .5.. 7.a.'], smooth: true, tempo: [60, 100], styles: { soul: 3, funk: 1 }, tags: ['Melodic'] }),
+  A('popsync', 'Pop Syncopation', 'Roots on 1, the a of 1, the & of 2, the & of 3 and on 4.',
+    { meters: ['4/4'], grid: 's16', bars: ['R..R ..R. ..R. R...'], tempo: [70, 124], styles: { pop: 3, rock: 1.5 }, tags: ['Syncopated'] }),
+  A('rockpush16', 'Rock Push', 'Roots on the beats, then push the next chord in early.',
+    { meters: ['4/4'], grid: 's16', bars: ['R... R... R..R ..rN'], tempo: [64, 124], styles: { rock: 2, pop: 1.5 }, tags: ['Push'] }),
+  A('dubspace', 'Dub Space', 'Root on 1, fifth on the & of 3, octave on 4. Let it breathe.',
+    { meters: ['4/4'], grid: 's16', bars: ['R... .... ..5. 8...'], tempo: [56, 96], styles: { reggae: 2.5, soul: 0.5 }, tags: ['Space'] }),
+  A('funkwalk', 'Funk Walk', 'Root, octave, flat 7, fifth on the beats with roots in between.',
+    { meters: ['4/4'], grid: 's16', bars: ['R.r. 8.r. 7.r. 5.a.'], bluesy: true, stac: 0.7, tempo: [80, 116], styles: { funk: 2, soul: 2 }, tags: ['Melodic'] }),
+  A('slapfunk', 'Thumb and Pop', 'Thumb the root, pop the octave, dead notes in between.',
+    { meters: ['4/4'], grid: 's16', bars: ['R..8 x.R. .8x. R.8.'], stac: 0.5, tempo: [84, 120], styles: { funk: 2.5 }, tags: ['Octaves', 'Dead notes'] }),
+
+  // ---------- triplets: shuffles and 12/8 ----------
+  A('shufroots', 'Shuffle Roots', 'Root on the beat and the swung &. The Chicago shuffle bass.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.r R.r R.r R.r'], tempo: [50, 130], styles: { shuffle: 3.5, blues: 3, rock: 1.5 }, tags: ['Roots'] }),
+  A('shufboogie', 'Shuffle Boogie', 'Root, 3rd, 5th, 6th, flat 7 and back down, on the shuffle.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.3 5.6 7.6 5.3'], bluesy: true, tempo: [50, 130], styles: { shuffle: 4, blues: 4, rock: 1.5, country: 1 }, tags: ['Walking'] }),
+  A('shufwalk', 'Shuffle Walk-Up', 'One note a beat up the boogie and back down, over two bars.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. 3.. 5.. 6..', '7.. 6.. 5.. 3..'], bluesy: true, tempo: [44, 120], styles: { blues: 3, shuffle: 3, soul: 1 }, tags: ['Walking', 'Two bars'] }),
+  A('slowbluesbass', 'Slow Blues Line', 'Root, then 3rd and 5th on the triplets, 6th, and a step into the next bar.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. 3.5 6.. 5.a'], bluesy: true, smooth: true, tempo: [40, 90], styles: { blues: 3.5, soul: 2, shuffle: 1.5 }, tags: ['Walking'] }),
+  A('shuffifth', 'Root and Swung Fifth', 'Root on 1 and 3, a fifth on the swung & of 2 and 4.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. ..5 R.. ..5'], tempo: [50, 130], styles: { shuffle: 2.5, blues: 2.5, country: 1.5, rock: 1.5 }, tags: ['Root-fifth'] }),
+  A('tripletroots', 'Triplet Roots', 'Every triplet on the root. Steady and rolling.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['Rrr Rrr Rrr Rrr'], tempo: [40, 80], styles: { heavy: 2, rock: 2, soul: 1 }, tags: ['Triplets'] }),
+  A('tripgallopbass', 'Triplet Gallop', 'Three roots, one long one. Busy beat, quiet beat.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['Rrr R.. Rrr R..'], tempo: [44, 100], styles: { heavy: 2.5, rock: 2 }, tags: ['Gallop'] }),
+  A('gospelwalk', 'Gospel Walk', 'Root, a fifth on the last triplet, octave, flat 7, then step into the next chord.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. ..5 8.. 7.a'], bluesy: true, smooth: true, tempo: [44, 96], styles: { soul: 3, blues: 2, pop: 1 }, tags: ['Melodic'] }),
+  A('longroots', 'Long Roots', 'Let the root ring for the bar, then step into the next one.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. ... ... ..a'], tempo: [40, 110], styles: { blues: 2, soul: 2, pop: 2, rock: 2 }, tags: ['Space', 'Approach'] }),
+  A('halftimeshufbass', 'Half-Time Shuffle Bass', 'Root on 1, a swung pickup into 2, then a fifth sneaking into the next bar.',
+    { meters: ['4/4', '12/8'], grid: 't12', bars: ['R.. ..r ... ..5'], tempo: [60, 110], styles: { shuffle: 2.5, rock: 2, soul: 1.5, funk: 1 }, tags: ['Space'] }),
+
+  // ---------- 3/4 ----------
+  A('waltzone', 'Waltz Downbeat', 'Root on the 1, then the fifth on the 1 of the next bar.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R.....', '5.....'], tempo: [80, 200], styles: { country: 3, pop: 2, jazz: 1, soul: 1 }, tags: ['Root-fifth', 'Two bars'] }),
+  A('waltzwalk', 'Waltz Walk', 'Root, 3rd, 5th: one note a beat.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R.3.5.'], smooth: true, tempo: [80, 200], styles: { pop: 2, jazz: 2, country: 1.5 }, tags: ['Walking'] }),
+  A('waltzstep', 'Waltz Step', 'Hold the root, then a half step into the next bar.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R...a.'], tempo: [70, 200], styles: { pop: 2, rock: 1.5, soul: 1.5, country: 1.5 }, tags: ['Approach'] }),
+  A('waltzoct', 'Waltz Octave', 'Root, octave, fifth. One a beat.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R.8.5.'], tempo: [80, 190], styles: { pop: 1.5, rock: 1.5, heavy: 1 }, tags: ['Octaves'] }),
+  A('waltzeighths', 'Waltz Eighths', 'Root on every eighth, in three.',
+    { meters: ['3/4'], grid: 'e8', bars: ['Rrrrrr'], tempo: [90, 170], styles: { heavy: 2, rock: 1.5 }, tags: ['Eighths'] }),
+  A('waltzrootfifth', 'Waltz Root-Fifth', 'Root on 1, fifth on 3. Light and lilting.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R...5.'], tempo: [80, 200], styles: { country: 2.5, pop: 2, jazz: 1.5, soul: 1 }, tags: ['Root-fifth'] }),
+  A('waltzquarters', 'Waltz Quarters', 'The root on every beat, in three.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R.r.r.'], tempo: [80, 190], styles: { pop: 2, rock: 2, heavy: 1, soul: 1 }, tags: ['Roots'] }),
+  A('waltzjazzwalk', 'Jazz Waltz Walk', 'Walk root, 3rd, 5th, then octave, 5th and a step into the next chord.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R.3.5.', '8.5.a.'], smooth: true, tempo: [90, 220], styles: { jazz: 3.5, latin: 1, soul: 1 }, tags: ['Walking', 'Two bars'] }),
+  A('waltzdotted', 'Dotted Waltz', 'Root and fifth as two dotted quarters, so the bass floats against the three.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R..5..'], tempo: [80, 180], styles: { pop: 2, soul: 2, rock: 1.5, latin: 1.5, jazz: 1 }, tags: ['Syncopated'] }),
+  A('waltzpush', 'Waltz Push', 'Hold the root, then the next chord’s root early on the & of 3.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R...rN'], tempo: [80, 190], styles: { rock: 1.5, pop: 1.5, country: 1, heavy: 1 }, tags: ['Push'] }),
+  A('waltzfifthstep', 'Waltz Fifth and Step', 'Root, fifth, then a half step into the next bar.',
+    { meters: ['3/4'], grid: 'e8', bars: ['R.5.a.'], tempo: [80, 200], styles: { country: 2, jazz: 2, pop: 1.5, blues: 1 }, tags: ['Approach'] }),
+  A('waltzgallop', 'Waltz Gallop', 'An eighth and two sixteenths on every beat, in three.',
+    { meters: ['3/4'], grid: 's16', bars: ['R.rrR.rrR.rr'], tempo: [70, 140], styles: { heavy: 2.5, rock: 1 }, tags: ['Gallop'] }),
+  A('waltzreggae', 'Reggae Waltz Bass', 'Skip the 1, then root, fifth and octave.',
+    { meters: ['3/4'], grid: 's16', bars: ['_..R ..5. 8...'], tempo: [56, 100], styles: { reggae: 3 }, tags: ['Space'] }),
+  A('waltzsync', 'Waltz Syncopation', 'Roots that land after the beat, in three.',
+    { meters: ['3/4'], grid: 's16', bars: ['R..r ..5. ..r.'], tempo: [60, 120], styles: { pop: 2, soul: 1.5, rock: 1 }, tags: ['Syncopated'] }),
+
+  // ---------- 6/8 ----------
+  A('sixroots', 'Six-Eight Roots', 'Root on 1, fifth on 4.',
+    { meters: ['6/8'], grid: 't12', bars: ['R.. 5..'], tempo: [36, 100], styles: { rock: 2, pop: 2, soul: 2, country: 2, blues: 1.5 }, tags: ['Root-fifth'] }),
+  A('sixarpbass', 'Six-Eight Arpeggio', 'Root, fifth, octave, fifth across the bar.',
+    { meters: ['6/8'], grid: 't12', bars: ['R.5 8.5'], tempo: [36, 90], styles: { pop: 2, soul: 2, rock: 1.5 }, tags: ['Melodic'] }),
+  A('sixdrive', 'Six-Eight Drive', 'Every eighth on the root, leaning on 1 and 4.',
+    { meters: ['6/8'], grid: 't12', bars: ['Rrr Rrr'], tempo: [36, 90], styles: { heavy: 2, rock: 1.5 }, tags: ['Eighths'] }),
+  A('sixwalk', 'Six-Eight Walk', 'Root, then a 3rd and a step into the next bar.',
+    { meters: ['6/8'], grid: 't12', bars: ['R.. 3.a'], smooth: true, tempo: [36, 90], styles: { soul: 2, blues: 2, country: 1.5 }, tags: ['Approach'] }),
+  A('afrosix', 'Afro Six Bass', 'Root on 1, fifth on 3 and 6, rolling with the bell.',
+    { meters: ['6/8'], grid: 't12', bars: ['R.5 ..5'], tempo: [60, 130], styles: { latin: 3, jazz: 2 }, tags: ['Root-fifth'] }),
+];
+
+// shuffle and 6/8 versions, the same way the strums get them
+for (const a of ARCH.slice()) {
+  if (a.grid !== 'e8' || !a.meters.includes('4/4') || a.feel === 'straight') continue;
+  if ((a.styles.latin || 0) >= Math.max(...Object.values(a.styles))) continue;
+  const bars = a.bars.map(b => b.replace(/\s+/g, '').replace(/(.)(.)/g, '$1.$2'));
+  ARCH.push({ ...a, id: a.id + '~3', grid: 't12', meters: ['4/4', '12/8'], bars, feel: 'triplet', tempo: [Math.round(a.tempo[0] * 0.6), a.tempo[1]], derived: true });
+}
+const baseId = id => id.replace(/~\d+$/, '');
+for (const a of ARCH.slice()) {
+  if (a.grid !== 't12' || !a.meters.includes('12/8')) continue;
+  let bars = []; a.bars.forEach(b => { const s = b.replace(/\s+/g, ''); bars.push(s.slice(0, 6), s.slice(6)); });
+  if (bars.length === 2 && bars[0] === bars[1]) bars = [bars[0]];
+  ARCH.push({ ...a, id: baseId(a.id) + '~6', meters: ['6/8'], bars, derived: true });
+}
+for (const a of ARCH) {
+  a.bars = a.bars.map(b => b.replace(/\s+/g, ''));
+  for (const m of a.meters) for (const b of a.bars) if (b.length !== METER_BEATS[m] * GRID[a.grid] || !LETTERS.test(b)) throw new Error(`bass ${a.id} in ${m}: ${b}`);
+  const beats = a.bars.reduce((n, b) => n + b.length, 0) / GRID[a.grid];
+  const per = a.bars.reduce((n, b) => n + b.replace(/[._]/g, '').length, 0) / beats;
+  if (a.tempo[0] <= 96) a.tempo = [Math.min(a.tempo[0], a.grid === 'e8' ? 62 : 52), a.tempo[1]];
+  if (per <= 1) a.tempo = [a.tempo[0], Math.max(a.tempo[1], 260)];
+  else if (per <= 1.5 && a.grid !== 's16') a.tempo = [a.tempo[0], Math.max(a.tempo[1], 215)];
+}
+const BY_ID = Object.fromEntries(ARCH.map(a => [a.id, a]));
+
+// ---------- fitting the groove ----------
+const NEAR = {
+  shuffle: { blues: 0.85, rock: 0.45, country: 0.4, soul: 0.4, jazz: 0.35, heavy: 0.3, funk: 0.25, pop: 0.25 },
+  blues: { shuffle: 0.85, rock: 0.45, soul: 0.45, country: 0.35, jazz: 0.3, funk: 0.25, heavy: 0.25, pop: 0.2 },
+  rock: { heavy: 0.5, pop: 0.5, blues: 0.35, shuffle: 0.3, country: 0.3, soul: 0.2, funk: 0.2 },
+  heavy: { rock: 0.6, blues: 0.2, shuffle: 0.2 },
+  pop: { rock: 0.5, soul: 0.45, country: 0.35, reggae: 0.2, funk: 0.2, latin: 0.15 },
+  country: { rock: 0.35, shuffle: 0.35, pop: 0.35, blues: 0.3 },
+  soul: { funk: 0.5, pop: 0.45, blues: 0.35, shuffle: 0.3, jazz: 0.3, reggae: 0.2 },
+  funk: { soul: 0.55, latin: 0.25, rock: 0.2, pop: 0.2, jazz: 0.2 },
+  reggae: { soul: 0.3, funk: 0.25, pop: 0.2, latin: 0.2 },
+  latin: { jazz: 0.35, funk: 0.3, reggae: 0.2, soul: 0.2, pop: 0.15 },
+  jazz: { latin: 0.3, soul: 0.3, blues: 0.3, shuffle: 0.3, funk: 0.2 },
+};
+function styleWeight(a, style) {
+  if (a.styles[style]) return a.styles[style];
+  let w = 0; for (const [k, x] of Object.entries(a.styles)) if ((NEAR[style] || {})[k]) w = Math.max(w, x * NEAR[style][k]);
+  return w;
+}
+function fits(a, tpl, bpm, swing, loose) {
+  if (!a.meters.includes(tpl.meter)) return 0;
+  if (!Strum.gridsFor(tpl, bpm, swing).includes(a.grid)) return 0;
+  const feel = Strum.feelOf(tpl, swing);
+  if (a.feel === 'straight' && feel === 'swing') return 0;
+  if (a.feel === 'triplet' && feel !== 'triplet') return 0;
+  const [lo, hi] = a.tempo;
+  if (bpm >= lo && bpm <= hi) return 1;
+  const d = bpm < lo ? (lo - bpm) / lo : (bpm - hi) / hi;
+  return d < (loose ? 0.4 : 0.12) ? 0.25 : 0;
+}
+function compatible(b, tpl, bpm, swing) {
+  if (!b || METER_BEATS[tpl.meter] * b.per !== b.slots) return false;
+  if (b.gen) return Strum.gridsFor(tpl, bpm, swing).includes(b.grid);
+  const a = BY_ID[b.id];
+  return !!a && fits(a, tpl, bpm, swing, true) > 0;
+}
+
+// onset positions (in ticks) of a pattern's first bar, for comparing rhythms
+const onsetsOf = (bar, per) => [...bar].map((c, i) => (c !== '.' && c !== '_' && c !== 'x' && c !== 'g' ? Math.round(i * TPB / per) : -1)).filter(t => t >= 0);
+const q3 = t => Math.round(t / 3);
+function overlap(a, b) {   // share of a's hits that land with one of b's
+  if (!a.length) return 0;
+  const B = new Set(b.map(q3));
+  return a.filter(t => B.has(q3(t))).length / a.length;
+}
+function similarity(a, b) {
+  const A2 = new Set(a.map(q3)), B2 = new Set(b.map(q3));
+  const inter = [...A2].filter(x => B2.has(x)).length, uni = new Set([...A2, ...B2]).size;
+  return uni ? inter / uni : 0;
+}
+
+function weighted(rnd, list) {
+  const tot = list.reduce((s, [, w]) => s + w, 0);
+  if (tot <= 0) return null;
+  let x = rnd() * tot;
+  for (const [k, w] of list) { if ((x -= w) <= 0) return k; }
+  return list[list.length - 1][0];
+}
+
+// ---------- generated lines that take their rhythm from the band ----------
+const PALETTE = {
+  rock: [['r', 5], ['8', 1.2], ['5', 1]], heavy: [['r', 6], ['8', 0.6]], pop: [['r', 4], ['5', 1.2], ['8', 1], ['3', 0.5]],
+  country: [['5', 3], ['r', 2]], blues: [['r', 3], ['5', 1.5], ['6', 1], ['7', 0.8], ['8', 1]], shuffle: [['r', 3], ['5', 1.5], ['6', 1], ['7', 0.8], ['8', 1]],
+  funk: [['r', 3], ['8', 2], ['7', 1.2], ['5', 1], ['x', 0.8]], soul: [['r', 3], ['5', 1.5], ['8', 1], ['3', 0.8]],
+  reggae: [['r', 3], ['5', 1.5], ['3', 1], ['8', 0.8]], latin: [['r', 2], ['5', 2], ['8', 1]], jazz: [['r', 2], ['3', 1.5], ['5', 1.5], ['8', 0.6]],
+};
+const BLUESY = new Set(['blues', 'shuffle', 'funk', 'soul', 'rock', 'country']);
+function gridOf(tpl) { return tpl.sub === 3 || tpl.meter === '6/8' || tpl.meter === '12/8' ? 't12' : tpl.sub === 4 ? 's16' : 'e8'; }
+function fillDegrees(slotsArr, style, rnd, rootsOnly) {
+  // slotsArr: array of booleans (a note starts here); first note of the bar is the root
+  const pal = rootsOnly ? [['r', 1]] : PALETTE[style] || PALETTE.rock;
+  const idx = slotsArr.map((on, i) => (on ? i : -1)).filter(i => i >= 0);
+  const out = Array(slotsArr.length).fill('.');
+  idx.forEach((i, k) => {
+    let ch;
+    if (k === 0) ch = 'R';
+    else if (k === idx.length - 1 && idx.length > 2 && i >= slotsArr.length * 0.7 && rnd() < 0.35 && !rootsOnly) ch = 'a';
+    else ch = weighted(rnd, pal);
+    if (style === 'country' && k > 0 && !rootsOnly) ch = k % 2 ? '5' : 'r';
+    out[i] = ch;
+  });
+  if (idx[0] !== 0 && out[0] === '.') out[0] = '_';   // nothing on the 1: let the bar start silent
+  return out.join('');
+}
+function genKick(o, rnd) {
+  const grid = gridOf(o.tpl), per = GRID[grid], slots = METER_BEATS[o.tpl.meter] * per, tick = TPB / per;
+  const on = Array(slots).fill(false);
+  (o.kicks || []).forEach(t => { const i = Math.round(t / tick); if (Math.abs(i * tick - t) < 0.6 && i < slots) on[i] = true; });
+  if (!on.some(Boolean)) on[0] = true;
+  const rootsOnly = rnd() < 0.45;
+  const bar = fillDegrees(on, o.tpl.style, rnd, rootsOnly);
+  return rootsOnly
+    ? { id: 'gen-kickroots', name: 'Roots with the Kick', tip: 'The root note on every kick hit. Bass and kick drum play as one.', grid, per, slots, bars: [bar], tags: ['Locks with kick', 'Roots'], rel: 'kick' }
+    : { id: 'gen-kick', name: 'Locked to the Kick', tip: 'Every note lands with the kick drum: the root on the downbeat, chord tones after.', grid, per, slots, bars: [bar], tags: ['Locks with kick'], rel: 'kick' };
+}
+function genStrum(o, rnd) {
+  const st = o.strum, per = st.per, slots = st.slots;
+  const b = st.bars[0];
+  let hits = b.ev.filter(e => e.art !== 'chuck' && e.art !== 'stop' && (e.accent || e.dir === 'D' || e.art === 'bass' || e.art === 'alt' || e.art === 'boogie'));
+  if (hits.length > 6) hits = hits.filter(e => e.accent || e.i % per === 0);
+  if (hits.length > 6) hits = hits.filter(e => e.i % per === 0);
+  const on = Array(slots).fill(false); hits.forEach(e => { on[e.i] = true; });
+  if (!on.some(Boolean)) on[0] = true;
+  return { id: 'gen-strum', name: 'Rides with the Strum', tip: 'Hits with the guitar’s strong strums, so bass and guitar punch together.', grid: st.grid, per, slots, bars: [fillDegrees(on, o.tpl.style, rnd, rnd() < 0.3)], tags: ['Follows the strum'], rel: 'strum' };
+}
+function genCounter(o, rnd) {
+  const st = o.strum;
+  const grid = st ? st.grid : gridOf(o.tpl), per = GRID[grid], slots = METER_BEATS[o.tpl.meter] * per, tick = TPB / per;
+  const busy = new Set();
+  if (st) st.bars[0].ev.forEach(e => { if (e.art !== 'stop') busy.add(e.i); });
+  (o.kicks || []).forEach(t => { if (t > 0) busy.add(Math.round(t / tick)); });
+  const free = []; for (let i = 1; i < slots; i++) if (!busy.has(i)) free.push(i);
+  const off = free.filter(i => i % per !== 0), cands = off.length >= 2 ? off : free;
+  const n = Math.min(cands.length, 2 + Math.floor(rnd() * 3));
+  const pick = new Set();
+  for (let k = 0; k < n * 4 && pick.size < n; k++) { const i = cands[Math.floor(rnd() * cands.length)]; if (![...pick].some(j => Math.abs(j - i) < 2)) pick.add(i); }
+  const on = Array(slots).fill(false); on[0] = true; pick.forEach(i => { on[i] = true; });
+  return { id: 'gen-gaps', name: 'Plays the Gaps', tip: 'Root on the 1, then notes where the guitar and kick leave space, answering them instead of doubling.', grid, per, slots, bars: [fillDegrees(on, o.tpl.style, rnd, false)], tags: ['Plays the gaps'], rel: 'gaps', stac: 0.6 };
+}
+
+// ---------- rolling ----------
+const recent = [];
+function fromArch(a, o) {
+  const per = GRID[a.grid];
+  const b = { id: a.id, name: a.name, tip: a.tip, grid: a.grid, per, slots: METER_BEATS[o.tpl.meter] * per, bars: a.bars.slice(), tags: (a.tags || []).slice(0, 2), stac: a.stac, smooth: a.smooth, bluesy: a.bluesy, rel: 'own' };
+  if (o.kicks && o.kicks.length && overlap(onsetsOf(b.bars[0], per), o.kicks) >= 0.75 && !b.tags.includes('Pedal')) b.tags.unshift('Locks with kick');
+  return b;
+}
+function candidates(o, extra) {
+  const tpl = o.tpl, style = tpl.style;
+  for (const pass of [0, 1, 2]) {
+    const list = ARCH.map(a => {
+      const f = fits(a, tpl, o.bpm, o.swing || 0, pass >= 1);
+      if (!f) return [a, 0];
+      const sw = styleWeight(a, style) || (pass === 2 ? 0.4 : 0);
+      const rec = recent.some(r => baseId(r) === baseId(a.id)) ? 0.1 : 1;
+      return [a, f * sw * (a.derived ? 0.8 : 1) * rec * (extra ? extra(a) : 1)];
+    }).filter(([, w]) => w > 0);
+    if (list.length) return list;
+  }
+  return [];
+}
+/**
+ * o: { tpl, bpm, swing, kicks: [ticks], strum: rolled strum or null, avoid }
+ * Picks how the bass relates to the band this time: its own groove from the library, locked to the kick,
+ * riding the guitar's accents, or playing in the gaps the guitar leaves.
+ */
+function roll(o, rnd = Math.random) {
+  const style = o.tpl.style, st = o.strum;
+  const ways = [['arch', 0.55], ['kick', o.kicks && o.kicks.length ? 0.2 : 0], ['strum', st ? 0.12 : 0], ['gaps', 0.13]];
+  let way = weighted(rnd, ways);
+  if (o.avoid && o.avoid.startsWith('gen-') && rnd() < 0.6) way = 'arch';
+  let b;
+  if (way === 'kick') b = genKick(o, rnd);
+  else if (way === 'strum') b = genStrum(o, rnd);
+  else if (way === 'gaps') b = genCounter(o, rnd);
+  else {
+    // a library line can still lean toward the strum or away from it
+    let extra = null;
+    if (st) {
+      const sOn = st.bars[0].ev.filter(e => e.art !== 'chuck' && e.art !== 'stop').map(e => Math.round(e.i * TPB / st.per));
+      const lean = weighted(rnd, [['with', 0.3], ['around', 0.3], ['own', 0.4]]);
+      if (lean === 'with') extra = a => 0.2 + 3 * Math.pow(similarity(onsetsOf(a.bars[0], GRID[a.grid]), sOn), 1.3);
+      else if (lean === 'around') extra = a => 0.2 + 2.5 * Math.pow(1 - overlap(onsetsOf(a.bars[0], GRID[a.grid]).filter(t => t > 0), sOn), 2);
+    }
+    const cands = candidates(o, extra).map(([a, w]) => [a, a.id === o.avoid ? w * 0.04 : w]);
+    const a = cands.length ? weighted(rnd, cands) : BY_ID.rootquarters;
+    b = fromArch(a, o);
+  }
+  b.gen = b.id.startsWith('gen-');
+  b.bluesy = b.bluesy || (b.gen && BLUESY.has(style) && style !== 'rock' && style !== 'country');
+  recent.push(b.id); if (recent.length > 8) recent.shift();
+  return b;
+}
+// the line for a new groove that feels most like a kept one
+function closest(old, o) {
+  if (old.gen) { const r = old.rel === 'kick' ? genKick(o, Math.random) : old.rel === 'strum' && o.strum ? genStrum(o, Math.random) : genCounter(o, Math.random); r.gen = true; return r; }
+  const fo = feat(old.bars, old.per);
+  const cands = candidates(o);
+  if (!cands.length) return roll(o);
+  const scored = cands.map(([a, w]) => { const f = feat(a.bars, GRID[a.grid]); const d = Math.abs(f.dens - fo.dens) + 2 * Math.abs(f.move - fo.move) + (baseId(a.id) === baseId(old.id) ? -1 : 0); return [a, Math.exp(-d * 2) * Math.pow(w, 0.3)]; })
+    .sort((x, y) => y[1] - x[1]).slice(0, 3);
+  return fromArch(weighted(Math.random, scored), o);
+}
+function feat(bars, per) {
+  const all = bars.join(''), n = all.replace(/[._]/g, '').length, beats = all.length / per;
+  return { dens: n / beats, move: (all.match(/[3578624awN]/g) || []).length / Math.max(1, n) };
+}
+
+// ---------- saving ----------
+function clean(b) {
+  if (!b || !Array.isArray(b.bars) || !b.bars.length || ![2, 3, 4].includes(b.per)) return null;
+  const slots = b.bars[0].length;
+  if (b.bars.some(s => typeof s !== 'string' || s.length !== slots || !LETTERS.test(s))) return null;
+  const s = v => String(v || '').replace(/[<>&"]/g, '').slice(0, 160);
+  return { id: s(b.id), name: s(b.name) || 'Bass line', tip: s(b.tip), grid: b.per === 3 ? 't12' : b.per === 4 ? 's16' : 'e8', per: b.per, slots, bars: b.bars.slice(0, 4),
+    tags: (b.tags || []).map(s).slice(0, 3), stac: +b.stac || 0, smooth: !!b.smooth, bluesy: !!b.bluesy, rel: s(b.rel) || 'own', gen: String(b.id).startsWith('gen-') };
+}
+
+window.BassLine = { ARCH, BY_ID, roll, closest, compatible, onsetsOf, overlap, similarity, clean, GRID, METER_BEATS };
+})();
+
+</script>
+<script>
 // ===== Jam Roulette guitar: sampled strings, strummed like a player =====
 // Each of the six strings is its own voice: a new note on a string cuts what it was playing, a hand mute or
 // chord change damps everything, short stabs are choked, palm mutes are damped by a closing filter.
@@ -5194,38 +5648,68 @@ function createGuitar(ctx, destination) {
 
 </script>
 <script>
-// ===== Jam Roulette bass: a simple synth bass that plays the chord roots with the kick drum =====
+// ===== Jam Roulette bass: a finger-style electric bass, synthesized =====
+// A round sine body, a filtered saw for the growl that closes up as the note decays, and a short pluck at the
+// start. Dead notes are a muted thump, ghosts are short and quiet, and slides glide up into the note.
 function createBass(ctx, destination) {
   const out = ctx.createGain(); out.gain.value = 1;
   const sat = ctx.createWaveShaper();
-  { const n = 2048, c = new Float32Array(n); for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 2 - 1; c[i] = Math.tanh(1.6 * x) / Math.tanh(1.6); } sat.curve = c; }
-  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 35;
-  out.connect(sat).connect(hp).connect(destination);
+  { const n = 2048, c = new Float32Array(n); for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 2 - 1; c[i] = Math.tanh(1.8 * x) / Math.tanh(1.8); } sat.curve = c; }
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 32; hp.Q.value = 0.6;
+  const body = ctx.createBiquadFilter(); body.type = 'peaking'; body.frequency.value = 110; body.gain.value = 2.5; body.Q.value = 0.8;
+  out.connect(sat).connect(hp).connect(body).connect(destination);
+  // a short burst of noise, shared by plucks and dead notes
+  const nb = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.06), ctx.sampleRate);
+  { const d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3); }
   let last = null;
   const all = new Set();
   function release(v, t) {
     if (!v || v.done) return; v.done = true;
-    try { v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0, t, 0.025); v.oscs.forEach(o => o.stop(t + 0.25)); } catch (e) {}
+    try { v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0, t, 0.018); v.oscs.forEach(o => o.stop(t + 0.2)); } catch (e) {}
   }
-  // midi: note number, t: start time, dur: seconds, vel: 0..1
-  function play(midi, t, dur, vel = 0.85) {
+  function click(t, vel, freq, q) {
+    const s = ctx.createBufferSource(); s.buffer = nb;
+    const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q;
+    const g = ctx.createGain(); g.gain.value = vel;
+    s.connect(f).connect(g).connect(out); s.start(t); s.onended = () => { try { g.disconnect(); } catch (e) {} };
+  }
+  // midi: note, t: start, dur: seconds, vel 0..1, kind: 'note' | 'dead' | 'ghost', slide: glide up into it
+  function play(midi, t, dur, vel = 0.85, kind = 'note', slide = false) {
+    if (!isFinite(midi) || !isFinite(t) || !isFinite(dur)) return;
     release(last, t);
     const f = 440 * Math.pow(2, (midi - 69) / 12);
-    const saw = ctx.createOscillator(); saw.type = 'sawtooth'; saw.frequency.value = f;
-    const sine = ctx.createOscillator(); sine.type = 'sine'; sine.frequency.value = f;
-    const sg = ctx.createGain(); sg.gain.value = 0.28;
-    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 0.9;
-    lp.frequency.setValueAtTime(380 + 1300 * vel, t); lp.frequency.setTargetAtTime(420, t + 0.01, 0.09);
+    if (kind === 'dead') {
+      click(t, 0.5 * vel, 700, 0.9);
+      const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+      const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.28 * vel, t + 0.004); g.gain.setTargetAtTime(0, t + 0.012, 0.02);
+      o.connect(g).connect(out); o.start(t); o.stop(t + 0.15); o.onended = () => { try { g.disconnect(); } catch (e) {} };
+      last = null; return;
+    }
+    const d = Math.max(0.06, dur);
+    const sine = ctx.createOscillator(); sine.type = 'sine';
+    const saw = ctx.createOscillator(); saw.type = 'sawtooth';
+    const tri = ctx.createOscillator(); tri.type = 'triangle';
+    for (const o of [sine, saw, tri]) {
+      const ff = o === tri ? f * 2 : f;
+      if (slide) { o.frequency.setValueAtTime(ff * Math.pow(2, -2 / 12), t); o.frequency.exponentialRampToValueAtTime(ff, t + 0.075); }
+      else o.frequency.setValueAtTime(ff, t);
+    }
+    const sg = ctx.createGain(); sg.gain.value = 0.22;
+    const tg = ctx.createGain(); tg.gain.value = 0.1;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 1.1;
+    const bright = 260 + 1500 * vel;
+    lp.frequency.setValueAtTime(bright, t); lp.frequency.setTargetAtTime(330, t + 0.01, 0.12 + 0.1 * vel);
     const g = ctx.createGain();
-    const peak = 0.42 * vel;
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + 0.006);
-    g.gain.setTargetAtTime(peak * 0.72, t + 0.02, 0.18);
-    g.gain.setTargetAtTime(0, t + Math.max(0.08, dur), 0.035);
-    saw.connect(sg).connect(lp); sine.connect(lp); lp.connect(g).connect(out);
-    const end = t + Math.max(0.08, dur) + 0.3;
-    saw.start(t); sine.start(t); saw.stop(end); sine.stop(end);
-    const v = { g, oscs: [saw, sine], done: false };
-    all.add(v); sine.onended = () => { try { g.disconnect(); lp.disconnect(); sg.disconnect(); } catch (e) {} all.delete(v); };
+    const peak = (kind === 'ghost' ? 0.5 : 0.62) * vel;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t + 0.005);
+    g.gain.setTargetAtTime(peak * 0.62, t + 0.02, 0.22);   // a plucked string fades as it rings
+    g.gain.setTargetAtTime(0, t + d, 0.03);
+    saw.connect(sg).connect(lp); tri.connect(tg).connect(lp); sine.connect(lp); lp.connect(g).connect(out);
+    if (kind !== 'ghost') click(t, 0.05 + 0.07 * vel, 1300, 1.4);
+    const end = t + d + 0.25;
+    for (const o of [sine, saw, tri]) { o.start(t); o.stop(end); }
+    const v = { g, oscs: [sine, saw, tri], done: false };
+    all.add(v); sine.onended = () => { try { g.disconnect(); lp.disconnect(); sg.disconnect(); tg.disconnect(); } catch (e) {} all.delete(v); };
     last = v;
   }
   function stopAll(t) { for (const v of all) release(v, t); last = null; }
@@ -5455,9 +5939,9 @@ $('chalRoll').innerHTML = I.dice;
 
 // ---------------- state ----------------
 const DEFAULTS = {
-  drum: null, strum: null, prog: null,
-  locks: { drum: false, strum: false, chords: false, key: false },
-  mute: { drum: false, gtr: false, bass: true },
+  drum: null, strum: null, prog: null, bass: null,
+  locks: { drum: false, strum: false, chords: false, bass: false, key: false },
+  mute: { drum: false, gtr: false, bass: false },
   modes: { chal: true, change: false }, every: 8,
   tone: 'clean', volD: 0.8, volG: 0.75, volB: 0.75, cx: 'simple', countIn: true, fills: true,
   level: 'standard', spice: false, styleFilter: null,
@@ -5527,7 +6011,24 @@ function rollStrum(o = {}) {
   const d = o.drum || S.drum, tpl = tplOf(d);
   const bar = compileBar({ tpl, I: d.I, B: d.B, swing: swingOf(d, tpl), fills: 0, extras: false, seed: d.seed, bpm: d.bpm, time: d.time }, 0, false);
   const kicks = bar.ev.filter(e => e.lane === 'K').map(e => e.t);
-  return Strum.roll({ tpl, bpm: d.bpm, swing: swingOf(d, tpl), kicks, avoid: S.strum && S.strum.id });
+  const b = o.bass !== undefined ? o.bass : view().bass;
+  const bassInfo = b && !S.mute.bass && Strum.METER_BEATS[tpl.meter] * b.per === b.slots ? { ticks: BassLine.onsetsOf(b.bars[0], b.per) } : null;
+  return Strum.roll({ tpl, bpm: d.bpm, swing: swingOf(d, tpl), kicks, avoid: S.strum && S.strum.id, bass: bassInfo });
+}
+function grooveFor(d) {
+  const tpl = tplOf(d), sw = swingOf(d, tpl);
+  const bar = compileBar({ tpl, I: d.I, B: d.B, swing: sw, fills: 0, extras: false, seed: d.seed, bpm: d.bpm, time: d.time }, 0, false);
+  return { tpl, bpm: d.bpm, swing: sw, kicks: [...new Set(bar.ev.filter(e => e.lane === 'K' && e.v > 0.33).map(e => e.t))].sort((a, b) => a - b) };
+}
+function rollBass(o = {}) {
+  const d = o.drum || view().drum, g = grooveFor(d);
+  const st = o.strum !== undefined ? o.strum : view().strum;
+  const strum = st && Strum.METER_BEATS[g.tpl.meter] * st.per === st.slots ? st : null;
+  return BassLine.roll({ ...g, strum, avoid: view().bass && view().bass.id });
+}
+function adaptBassTo(old, d, strum) {
+  const g = grooveFor(d);
+  return BassLine.closest(old, { ...g, strum: strum && Strum.METER_BEATS[g.tpl.meter] * strum.per === strum.slots ? strum : null });
 }
 const recentSigs = new Set();
 function rollProg(o = {}) {
@@ -5592,7 +6093,7 @@ function applyVolumes(instant) {
   const t = ctx.currentTime, tc = instant ? 0.001 : 0.04;
   drumBus.gain.setTargetAtTime(curve(S.volD) * 1.3, t, tc);
   gtrBus.gain.setTargetAtTime(curve(S.volG) * GTR_TRIM, t, tc);
-  bassBus.gain.setTargetAtTime(curve(S.volB) * 1.0, t, tc);
+  bassBus.gain.setTargetAtTime(curve(S.volB) * 0.6, t, tc);   // sits just under the guitar
 }
 const GTR_TRIM = 0.78, MASTER = 0.88;
 function applyMix(instant) {
@@ -5603,7 +6104,7 @@ function applyMix(instant) {
 
 // ---------------- scheduler ----------------
 const sched = { playing: false, bar: 0, beat: 0, next: 0, countLeft: 0, timer: null, cur: null, tpl: null };
-const org = { drum: 0, strum: 0, chords: 0, change: 0 };
+const org = { drum: 0, strum: 0, chords: 0, bass: 0, change: 0 };
 const pend = {};
 const barLog = [];
 const SIGMA = { K: 0.0028, S: 0.003, H: 0.002, R: 0.0024, P: 0.004, Q: 0.004, T: 0.003, T1: 0.003, T2: 0.003, X: 0 };
@@ -5645,22 +6146,110 @@ function guitarBar(bar) {
   }
   return out;
 }
-// bass: the chord's root on every kick, plus on every chord change, held until the next note
-function bassBar(bar, drum) {
-  const tpl = tplNow(), len = beatsOf(tpl) * TPB;
-  const ts = new Set(drum.ev.filter(e => e.lane === 'K' && e.v > 0.33 && !e.fillNote).map(e => Math.round(e.t * 2) / 2));
-  let prevKey = chordAt(bar - 1, beatsOf(tpl) - 0.01).key;
-  for (let b = 0; b < beatsOf(tpl); b++) { const k = chordAt(bar, b).key; if (k !== prevKey || b === 0 && !ts.size) ts.add(b * TPB); prevKey = k; }
-  if (!ts.size) ts.add(0);
-  const times = [...ts].sort((a, b) => a - b);
-  return times.map((t, i) => {
-    const ch = chordAt(bar, t / TPB);
-    const next = i + 1 < times.length ? times[i + 1] : len;
-    return { t, midi: 28 + mod(ch.c.root - 4, 12), beats: Math.min(2, (next - t) / TPB) * 0.92, v: t % TPB === 0 ? 0.9 : 0.78 };
+// ---------------- bass line: degrees turned into notes against the chord playing at that moment ----------------
+const SCALES = { major: [0, 2, 4, 5, 7, 9, 11], minor: [0, 2, 3, 5, 7, 8, 10] };
+const keyNow = () => (S.prog ? S.prog.key : { tonic: 4, mode: 'major' });
+const qIvs = c => [...new Set(Changes.theory.Q[c.q].iv.map(x => x[0] % 12))];
+const pcsOf = c => qIvs(c).map(x => mod(c.root + x, 12));
+const bassBase = pc => 28 + mod(pc - 4, 12);   // E1 up to D#2: the low register a bass lives in
+function degIv(c, d, b) {
+  const ivs = qIvs(c), key = keyNow(), sc = SCALES[key.mode].map(x => mod(key.tonic + x, 12));
+  const di = sc.indexOf(mod(c.root, 12));
+  const dia = n => (di >= 0 ? mod(sc[(di + n) % 7] - c.root, 12) : null);   // n scale steps above the root, in the key
+  const minor = ivs.includes(3) && !ivs.includes(4);
+  switch (d) {
+    case '5': { const f = ivs.find(x => x === 7 || x === 6 || x === 8); return f ?? 7; }
+    case 'L': return 0;
+    case '8': return 12;
+    case '3': { const t = ivs.find(x => x === 3 || x === 4); if (t !== undefined) return t; if (ivs.includes(5)) return 5; if (ivs.includes(2)) return 2; return dia(2) ?? 4; }
+    case '7': { const t = ivs.find(x => x === 10 || x === 11); if (t !== undefined) return t; if (b.bluesy || di < 0) return 10; const v = dia(6); return v === 10 ? 10 : 12; }
+    case '6': { if (ivs.includes(9)) return 9; if (b.bluesy) return 9; const v = dia(5); return v ?? (minor ? 8 : 9); }
+    case '2': { const v = dia(1); return v == null || v === 1 ? 2 : v; }
+    case '4': { const v = dia(3); return v == null ? 5 : v === 6 ? 7 : v; }
+    default: return 0;
+  }
+}
+const nearPc = (pc, pcs) => pcs.some(p => mod(p - pc, 12) === 1 || mod(pc - p, 12) === 1);
+function bassBar(bar) {
+  const b = S.bass; if (!b) return [];
+  const tpl = tplNow(), beats = beatsOf(tpl), len = beats * TPB, tick = TPB / b.per;
+  const n = b.bars.length, str = b.bars[mod(bar - org.bass, n)], nextStr = b.bars[mod(bar + 1 - org.bass, n)];
+  const trip = b.per === 3;
+  const nextRoot = () => chordAt(bar + 1, 0).c.root;
+  // 1) rhythm and degrees
+  const ev = [];
+  for (let i = 0; i < str.length; i++) { const ch = str[i]; if (ch !== '.') ev.push({ i, t: i * tick, ch }); }
+  // 2) pitches for chord tones
+  let prev = null;
+  for (const e of ev) {
+    if (e.ch === '_') { e.kind = 'stop'; continue; }
+    if ('aAw'.includes(e.ch)) continue;
+    const c = e.ch === 'N' ? chordAt(bar + 1, 0).c : chordAt(bar, e.t / TPB).c;
+    const key = keyNow();
+    let midi;
+    if (e.ch === 'P') {
+      const pcs = pcsOf(c);
+      midi = !pcs.includes(key.tonic) && nearPc(key.tonic, pcs) ? bassBase(c.root) : bassBase(key.tonic);   // a pedal that would rub a half step against the chord gives way to the root
+    } else if (e.ch === 'L') { midi = bassBase(c.root) - 5; if (midi < 28) midi += 12; }
+    else midi = bassBase(c.root) + degIv(c, e.ch, b);
+    if (b.smooth && prev !== null) { while (midi - prev > 7 && midi - 12 >= 28) midi -= 12; while (prev - midi > 7 && midi + 12 <= 52) midi += 12; }
+    e.midi = midi; e.c = c; prev = midi;
+  }
+  // 3) approach notes lean into whatever comes next
+  const firstNext = (() => { const k = [...nextStr].findIndex(ch => ch !== '.'); return k < 0 ? null : k; })();
+  for (let k = ev.length - 1; k >= 0; k--) {
+    const e = ev[k]; if (!'aAw'.includes(e.ch)) continue;
+    const nx = ev.slice(k + 1).find(x => x.midi !== undefined || x.kind === 'stop');
+    let target = nx && nx.midi !== undefined ? nx.midi : bassBase(nextRoot());
+    const before = ev.slice(0, k).reverse().find(x => x.midi !== undefined);
+    const p = before ? before.midi : target - 2;
+    if (e.ch === 'a') e.midi = target - 1;
+    else if (e.ch === 'A') e.midi = target + 1;
+    else {
+      const key = keyNow(), inKey = m => SCALES[key.mode].includes(mod(m - key.tonic, 12));
+      let m = p < target ? target - 1 : target + 1;
+      while (!inKey(m) && Math.abs(m - target) < 3) m += p < target ? -1 : 1;
+      e.midi = m === p ? target - 1 : m;
+    }
+    if (e.midi < 28) e.midi += 12;
+    e.c = chordAt(bar, e.t / TPB).c; e.pass = true;
+  }
+  // 4) lengths: each note rings until the next event, over the bar line only if the chord carries on
+  const out = [];
+  const changeAtNext = chordAt(bar + 1, 0).key !== chordAt(bar, beats - 0.01).key;
+  ev.forEach((e, k) => {
+    if (e.kind === 'stop') { out.push({ t: e.t, kind: 'stop', trip }); return; }
+    const nx = ev[k + 1];
+    let end = nx ? nx.t : len + (!changeAtNext && firstNext !== null ? firstNext * tick : 0);
+    let beatsLen = (end - e.t) / TPB;
+    let kind = 'note', v = e.ch === 'R' || e.ch === 's' ? 0.95 : e.i % b.per === 0 ? 0.85 : 0.74;
+    if (e.ch === 'x') { kind = 'dead'; beatsLen = Math.min(beatsLen, 0.15); v = 0.7; }
+    else if (e.ch === 'g') { kind = 'ghost'; beatsLen = Math.min(beatsLen, 0.14); v = 0.32; }
+    else if (e.pass) { v = 0.72; beatsLen = Math.min(beatsLen, 1); }
+    else if (b.stac) beatsLen = Math.max(0.12, beatsLen * b.stac);
+    // a non-chord note held over a beat can't rub a half step against the chord
+    if (kind === 'note' && !e.pass && beatsLen > 1) { const pcs = pcsOf(e.c); const pc = mod(e.midi, 12); if (!pcs.includes(pc) && nearPc(pc, pcs)) e.midi = bassBase(e.c.root); }
+    out.push({ t: e.t, midi: e.midi, beats: beatsLen * 0.94, v, kind, slide: e.ch === 's', trip, pass: !!e.pass });
   });
+  // 5) a chord change under a ringing note gets the new root, so the bass never sits on a wrong note
+  const changes = [];
+  if (chordAt(bar, 0).key !== chordAt(bar - 1, beats - 0.01).key) changes.push(0);
+  for (let x = 1; x < beats; x++) if (chordAt(bar, x).key !== chordAt(bar, x - 0.01).key) changes.push(x * TPB);
+  for (const tc of changes) {
+    if (out.some(o => Math.abs(o.t - tc) < 0.01)) continue;
+    const c = chordAt(bar, tc / TPB).c;
+    if (tc === 0) { if (str[0] === '.') out.unshift({ t: 0, midi: bassBase(c.root), beats: Math.min(1, (out[0] ? out[0].t : len) / TPB) * 0.94, v: 0.85, kind: 'note', trip }); continue; }
+    const ring = out.filter(o => o.kind === 'note' && o.t < tc && o.t + o.beats * TPB > tc).pop();
+    if (!ring) continue;
+    if (pcsOf(c).includes(mod(ring.midi, 12))) continue;
+    const endT = ring.t + ring.beats * TPB;
+    ring.beats = (tc - ring.t) / TPB * 0.94;
+    out.push({ t: tc, midi: bassBase(c.root), beats: (endT - tc) / TPB, v: 0.85, kind: 'note', trip });
+  }
+  return out.sort((x, y) => x.t - y.t);
 }
 function loopBars() {
-  if (!S.prog) return S.strum ? S.strum.bars.length : 1;
+  if (!S.prog) return Math.max(S.strum ? S.strum.bars.length : 1, S.bass ? S.bass.bars.length : 1);
   return Math.max(1, Math.round(S.prog.seq.reduce((a, s) => a + s.bars, 0)));
 }
 function applyPending(bar) {
@@ -5668,7 +6257,8 @@ function applyPending(bar) {
   if (pend.drum) { S.drum = pend.drum; org.drum = bar; changed = true; }
   if (pend.strum !== undefined) { S.strum = pend.strum; org.strum = bar; changed = true; }
   if (pend.prog !== undefined) { S.prog = pend.prog; org.chords = bar; changed = true; }
-  delete pend.drum; delete pend.strum; delete pend.prog;
+  if (pend.bass !== undefined) { S.bass = pend.bass; org.bass = bar; changed = true; }
+  delete pend.drum; delete pend.strum; delete pend.prog; delete pend.bass;
   return changed;
 }
 function startBar() {
@@ -5693,7 +6283,7 @@ function startBar() {
     if (fillBefore && !S.fills) drum = compileBar(engineState({ fills: 0, forceFill: true }), fbar, false);
     gtr = guitarBar(sched.bar);
   }
-  const bs = count ? [] : bassBar(sched.bar, drum);
+  const bs = count ? [] : bassBar(sched.bar);
   sched.cur = { drum, gtr, bs, count };
   const entry = { time: sched.next, bar: sched.bar, count, beats: beatsOf(tpl), spb: 60 / S.drum.bpm };
   barLog.push(entry); if (barLog.length > 8) barLog.shift();
@@ -5725,8 +6315,9 @@ function scheduleBeat() {
   }
   if (!S.mute.bass) for (const n of cur.bs) {
     if (n.t < b0 || n.t >= b0 + TPB) continue;
-    const w = warpBeat((n.t - b0) / TPB, tpl.sub, ratio, false);
-    bass.play(n.midi, Math.max(ctx.currentTime + 0.005, sched.next + w * dur + 0.002), n.beats * dur, n.v);
+    const w = warpBeat((n.t - b0) / TPB, tpl.sub, ratio, n.trip);
+    const time = Math.max(ctx.currentTime + 0.005, sched.next + w * dur + 0.003 + gauss() * 0.003);
+    if (n.kind === 'stop') bass.stopAll(time); else bass.play(n.midi, time, n.beats * dur, n.v, n.kind, n.slide);
   }
   sched.next += dur;
   sched.beat++;
@@ -5762,7 +6353,7 @@ async function start(atTime) {
   applyMix(true);
   guitar.stopAll(ctx.currentTime);
   sched.playing = true; sched.bar = 0; sched.beat = 0;
-  org.drum = org.strum = org.chords = org.change = 0;
+  org.drum = org.strum = org.chords = org.bass = org.change = 0;
   sched.countLeft = S.countIn && !atTime ? 1 : 0;
   sched.next = Math.max(atTime || 0, ctx.currentTime + 0.08);
   barLog.length = 0;
@@ -5778,7 +6369,7 @@ function restartNow() {
   const t = ctx.currentTime;
   mixer.fadeAll(t, 0.02); guitar.stopAll(t); bass.stopAll(t);
   applyPending(0);
-  org.drum = org.strum = org.chords = org.change = 0;
+  org.drum = org.strum = org.chords = org.bass = org.change = 0;
   sched.bar = 0; sched.beat = 0; sched.countLeft = 0; sched.next = t + 0.06;
   barLog.length = 0; countShownReset();
   applyMix(true); pump();
@@ -5805,9 +6396,9 @@ document.addEventListener('visibilitychange', async () => {
 // While playing, a change lands on the next bar line so the band never loses the one.
 function setLayer(layer, value) {
   if (sched.playing) pend[layer] = value;
-  else { if (layer === 'drum') S.drum = value; else if (layer === 'strum') S.strum = value; else S.prog = value; }
+  else { if (layer === 'drum') S.drum = value; else if (layer === 'strum') S.strum = value; else if (layer === 'bass') S.bass = value; else S.prog = value; }
 }
-const view = () => ({ drum: pend.drum || S.drum, strum: pend.strum !== undefined ? pend.strum : S.strum, prog: pend.prog !== undefined ? pend.prog : S.prog });
+const view = () => ({ drum: pend.drum || S.drum, strum: pend.strum !== undefined ? pend.strum : S.strum, prog: pend.prog !== undefined ? pend.prog : S.prog, bass: pend.bass !== undefined ? pend.bass : S.bass });
 
 function doRoll(layer, quiet) {
   const v = view();
@@ -5824,11 +6415,26 @@ function doRoll(layer, quiet) {
         setLayer('strum', ns);
         if (!quiet) toast(`The new beat is ${tpl.meter === v.strum.meter ? 'a different feel' : 'in ' + tpl.meter}, so the strum switched to ${ns.name}, the closest fit.`);
       } else if (!fits) setLayer('strum', rollStrumFor(d));
-    }  } else if (layer === 'strum') {
+    }
+    if (v.bass) {
+      const tpl = tplOf(d), st = view().strum;
+      const fits = BassLine.compatible(v.bass, tpl, d.bpm, swingOf(d, tpl));
+      if (S.locks.bass) { if (!fits) { const nb = adaptBassTo(v.bass, d, st); setLayer('bass', nb); if (!quiet) toast(`The bass line switched to ${nb.name} to fit the new beat.`); } }
+      else if (!fits || v.bass.rel === 'kick') setLayer('bass', v.bass.rel === 'kick' && fits ? adaptBassTo(v.bass, d, st) : rollBass({ drum: d, strum: st }));
+    }
+  } else if (layer === 'strum') {
     const d = v.drum;
-    setLayer('strum', rollStrumFor(d));
+    const st = rollStrumFor(d);
+    setLayer('strum', st);
+    // a bass line that takes its rhythm from the strum moves with it, unless it's kept
+    if (v.bass && !S.locks.bass && (v.bass.rel === 'strum' || v.bass.rel === 'gaps')) setLayer('bass', adaptBassTo(v.bass, d, st));
+    if (!quiet && st.rel) toast(st.rel === 'follow' ? 'This strum rides the bass line’s rhythm.' : 'This strum plays around the bass line, in the spaces it leaves.');
   } else if (layer === 'chords') {
     setLayer('prog', rollProg({ drum: v.drum }));
+  } else if (layer === 'bass') {
+    if (!v.bass) S.mute.bass = false;   // adding a bass line turns it on
+    const b = rollBass({ drum: v.drum, strum: v.strum });
+    setLayer('bass', b);
   }
   save();
   if (!quiet) { restartNow(); renderAll(); flash(layer); }
@@ -5840,15 +6446,17 @@ function adaptStrumTo(old, d) {
 }
 function rollStrumFor(d) { const keep = S.drum; S.drum = d; try { return rollStrum({ drum: d }); } finally { S.drum = keep; } }
 
+// the bass is the optional fourth part: Roll All includes it once it has been added
+const LAYERS = () => ['drum', 'strum', 'chords', ...(view().bass ? ['bass'] : [])];
 function rollPlan() {
-  return { layers: ['drum', 'strum', 'chords'].filter(l => !S.locks[l]) };
+  return { layers: LAYERS().filter(l => !S.locks[l]) };
 }
 // Roll all: every unlocked part at once, including parts not added yet
 function rollAll() {
   const plan = rollPlan();
   if (!plan.layers.length) { toast('Everything is locked. Unlock something to roll it.'); return; }
   for (const l of plan.layers) doRoll(l, true);
-  if (S.modes.chal && plan.layers.length === 3) rollChal();
+  if (S.modes.chal && ['drum', 'strum', 'chords'].every(l => plan.layers.includes(l))) rollChal();
   restartNow(); renderAll(); plan.layers.forEach(flash);
   const d = $('rollAll').querySelector('svg'); d.style.animation = 'none'; void d.offsetWidth; d.style.animation = 'spin .5s cubic-bezier(.3,.7,.3,1)';
 }
@@ -5859,6 +6467,7 @@ function doChangeUp(bar) {
   if (!S.locks.drum) cand.push(['drum', 0.8]);
   if (S.strum && !S.locks.strum) cand.push(['strum', 1]);
   if (S.prog && !S.locks.chords) cand.push(['chords', 1.2]);
+  if (S.bass && !S.locks.bass) cand.push(['bass', 0.8]);
   if (S.modes.chal) cand.push(['chal', 0.7]);
   if (!cand.length) return null;
   const pick = weighted(Math.random, cand);
@@ -5868,11 +6477,13 @@ function doChangeUp(bar) {
     if (!d) return null;
     S.drum = d; org.drum = bar;
     if (S.strum && !Strum.compatible(S.strum, tplOf(d), d.bpm, swingOf(d))) { S.strum = S.locks.strum ? adaptStrumTo(S.strum, d) : rollStrum(); org.strum = bar; }
+    if (S.bass && !BassLine.compatible(S.bass, tplOf(d), d.bpm, swingOf(d))) { S.bass = adaptBassTo(S.bass, d, S.strum); org.bass = bar; }
     applyMix();
     return 'Change-up: new drum groove';
   }
   if (pick === 'strum') { S.strum = rollStrum(); org.strum = bar; return 'Change-up: new strum'; }
   if (pick === 'chords') { S.prog = rollProg({ keepKey: true }); org.chords = bar; return 'Change-up: new chords, same key'; }
+  if (pick === 'bass') { S.bass = rollBass({ drum: S.drum, strum: S.strum }); org.bass = bar; return 'Change-up: new bass line'; }
   rollChal(CHAL_ROLES[Math.floor(Math.random() * CHAL_ROLES.length)][0]);
   return 'Change-up: new challenge';
 }
@@ -5951,6 +6562,67 @@ function strumGrid() {
   s += `<line class="head-line" id="strumHead" x1="${LBL}" x2="${LBL}" y1="0" y2="${RH}"/></svg>`;
   $('strumGrid').innerHTML = s;
 }
+// bass line: a small piano roll, notes as pills at their height above the root, labelled by degree
+const BS_IV = { R: 0, r: 0, s: 0, g: 0, P: 0, N: 0, L: -5, '5': 7, '8': 12, '3': 4, '7': 10, '6': 9, '2': 2, '4': 5 };
+const BS_LBL = { R: 'R', r: 'R', s: 'R', g: '', P: 'P', N: '→', L: '5', '5': '5', '8': '8', '3': '3', '6': '6', '2': '2', '4': '4', a: '↗', A: '↘', w: '~' };
+const NOTE_S = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'], NOTE_F = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'];
+function bassGrid() {
+  const b = view().bass, d = view().drum, tpl = tplOf(d);
+  if (!b) { $('bassGrid').innerHTML = ''; return; }
+  const n = b.bars.length, RH = 56;
+  const ratio = swingRatio(swingOf(d, tpl));
+  const xOf = i => { const bt = Math.floor(i / b.per), frac = (i - bt * b.per) / b.per; return LBL + ((bt + warpBeat(frac, tpl.sub, ratio, b.per === 3)) / (b.slots / b.per)) * GW; };
+  const H = n * RH + 18, beats = b.slots / b.per;
+  let s = `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">`;
+  for (let r = 0; r < n; r++) {
+    const y0 = r * RH, floor = y0 + RH - 12;
+    for (let k = 0; k <= beats; k++) { const x = LBL + (k / beats) * GW; s += `<line class="gl${k % beats === 0 ? ' b' : ''}" x1="${x}" x2="${x}" y1="${y0 + 4}" y2="${y0 + RH - 4}"/>`; }
+    s += `<line class="bs-floor" x1="${LBL}" x2="${LBL + GW}" y1="${floor}" y2="${floor}"/>`;
+    s += `<text class="lane-l" x="0" y="${y0 + RH / 2 + 3}">${n > 1 ? 'Bar ' + (r + 1) : ''}</text>`;
+    const str = b.bars[r], ev = [];
+    for (let i = 0; i < str.length; i++) if (str[i] !== '.') ev.push({ i, ch: str[i] });
+    ev.forEach((e, k) => {
+      if (e.ch === '_') { s += `<rect class="st-stop" x="${xOf(e.i)}" y="${floor - 14}" width="3" height="14" rx="1.5"/>`; return; }
+      let iv = BS_IV[e.ch];
+      if (iv === undefined) { const nx = ev.slice(k + 1).find(x => BS_IV[x.ch] !== undefined); iv = (nx ? BS_IV[nx.ch] : 0) - (e.ch === 'A' ? -1 : 1); }
+      if (e.ch === '7' && !b.bluesy) iv = 11;
+      const x = xOf(e.i), y = floor - 6 - iv * 2.5;
+      if (e.ch === 'x') { s += `<path class="bs-x" d="M${x} ${y - 4}l8 8M${x + 8} ${y - 4}l-8 8"/>`; return; }
+      const nx = ev[k + 1], endI = nx ? nx.i : b.slots;
+      const x2 = endI >= b.slots ? LBL + GW : xOf(endI);
+      const short = e.ch === 'g' || 'aAw'.includes(e.ch) || b.stac;
+      const w = Math.max(15, (short ? Math.min(x2 - x, (GW / beats) * (b.stac || 0.5)) : x2 - x) - 1.5);
+      s += `<rect class="bs-pill${'aAw'.includes(e.ch) ? ' pass' : ''}${e.ch === 'g' ? ' soft' : ''}" x="${x}" y="${y - 7}" width="${w.toFixed(1)}" height="14" rx="7"/>`;
+      const lb = e.ch === '7' ? (b.bluesy ? '♭7' : '7') : BS_LBL[e.ch];
+      if (lb) s += `<text class="bs-glyph" x="${x + 7.5}" y="${y + 3.8}" text-anchor="middle">${lb}</text>`;
+    });
+  }
+  const labels = beatLabels(tpl.meter, b.per);
+  labels.forEach((l, i) => { if (!l.beat && b.slots > 12 && i % 2 === 1) return; s += `<text class="beat-l${l.beat ? ' b' : ''}" x="${xOf(i) + 1}" y="${H - 3}">${l.txt}</text>`; });
+  s += `<line class="head-line" id="bassHead" x1="${LBL}" x2="${LBL}" y1="0" y2="${RH}"/></svg>`;
+  $('bassGrid').innerHTML = s;
+}
+const REL_TXT = { kick: 'Locks with the kick', strum: 'Follows the strum', gaps: 'Plays around the strum', own: '' };
+function renderBass() {
+  const b = view().bass;
+  $('bassCard').hidden = !b;
+  if (!b) return;
+  $('bassName').textContent = b.name;
+  const chips = [...new Set([REL_TXT[b.rel], ...(b.tags || [])].filter(Boolean))].filter(t => !(t === 'Locks with kick' && b.rel === 'kick')).slice(0, 3);
+  if (!chips.length) chips.push('Its own groove');
+  $('bassRel').innerHTML = chips.map(t => `<span>${esc(t)}</span>`).join('');
+  // the first bar's actual notes, against the chords as they fall
+  let notes = '';
+  if (S.bass === b) {
+    const key = keyNow(), flat = (key.mode === 'major' ? [5, 10, 3, 8, 1, 6] : [2, 7, 0, 5, 10, 3]).includes(key.tonic);
+    const nb = bassBar(org.bass).filter(x => x.kind === 'note');
+    const names = nb.map(x => (flat ? NOTE_F : NOTE_S)[mod(x.midi, 12)]).filter((n, i, arr) => n !== arr[i - 1]);
+    if (names.length > 1) notes = (S.prog ? 'First bar: ' : 'Over E: ') + names.slice(0, 8).join(' – ');
+  }
+  $('bassKey').textContent = notes ? '' : '';
+  $('bassTip').innerHTML = esc(b.tip) + (notes ? `<br><span class="soft">${esc(notes)}</span>` : '');
+  bassGrid();
+}
 const DRUM_FEEL = (d, tpl) => { if (tpl.sub === 3 || tpl.meter === '12/8' || tpl.meter === '6/8') return 'triplet feel'; const s = swingOf(d, tpl); return s < 0.08 ? 'straight' : s < 0.3 ? 'slight swing' : s < 0.62 ? 'swung' : 'shuffle'; };
 function renderDrum() {
   const d = view().drum, tpl = tplOf(d), st = STYLE_BY_ID[tpl.style];
@@ -6017,15 +6689,15 @@ function renderChal() {
       + (open ? `<div class="how">${how}</div>` : '') + `</li>`;
   }).join('');
 }
-function lockedCount() { return ['drum', 'strum', 'chords'].filter(k => S.locks[k]).length; }
+function lockedCount() { return LAYERS().filter(k => S.locks[k]).length; }
 function renderTools() {
   const v = view();
-  const has = { drum: true, strum: !!v.strum, chords: !!v.prog };
-  const CARD = { drum: 'drumCard', strum: 'strumCard', chords: 'chordCard' };
+  const has = { drum: true, strum: !!v.strum, chords: !!v.prog, bass: !!v.bass };
+  const CARD = { drum: 'drumCard', strum: 'strumCard', chords: 'chordCard', bass: 'bassCard' };
   document.querySelectorAll('[data-lock]').forEach(b => {
     const k = b.dataset.lock, on = !!S.locks[k] && has[k];
     b.setAttribute('aria-pressed', String(on)); b.innerHTML = on ? I.lock : I.unlock;
-    b.setAttribute('aria-label', (on ? 'Stop keeping ' : 'Keep ') + (k === 'drum' ? 'the drums' : k === 'strum' ? 'the strum' : 'the chords'));
+    b.setAttribute('aria-label', (on ? 'Stop keeping ' : 'Keep ') + ({ drum: 'the drums', strum: 'the strum', chords: 'the chords', bass: 'the bass line' })[k]);
     b.hidden = !has[k];
     $(CARD[k]).classList.toggle('locked', on);
     const row = b.closest('.step'); row.classList.toggle('kept', on); row.classList.toggle('empty-step', !has[k]);
@@ -6033,6 +6705,7 @@ function renderTools() {
   const d = v.drum, tpl = tplOf(d);
   $('stepDrum').textContent = `${tpl.name} · ${d.bpm} BPM`;
   $('stepStrum').textContent = v.strum ? v.strum.name : 'Not rolled yet';
+  $('stepBass').textContent = v.bass ? v.bass.name : 'Optional · add one any time';
   $('stepChords').textContent = v.prog ? `Key of ${Prog.keyShort(v.prog.key)} · ${v.prog.sig.split(' ').filter((c, i, a) => c !== a[i - 1]).slice(0, 5).join(' ')}` : 'Not rolled yet';
   for (const [k, id, txt] of [['drum', 'volD', 'Drums'], ['gtr', 'volG', 'Guitar'], ['bass', 'volB', 'Bass']]) {
     const on = !!S.mute[k];
@@ -6045,18 +6718,18 @@ function renderTools() {
     $(id + 'Txt').textContent = on ? 'Muted' : Math.round(S[id] * 100) + '%';
   }
   document.querySelector('.step[data-step="strum"] [data-mute]').hidden = !has.strum;
-  document.querySelector('.step[data-step="chords"] [data-mute]').hidden = !has.chords;
+  document.querySelector('.step[data-step="bass"] [data-mute]').hidden = !has.bass;
   $('cxSeg').innerHTML = [['simple', 'Simple'], ['medium', 'Medium'], ['advanced', 'Advanced']].map(([k, t]) => `<button data-cx="${k}" aria-pressed="${S.cx === k}">${t}</button>`).join('');
-  const n = lockedCount();
-  $('rollLabel').innerHTML = n === 3 ? 'All Kept' : n ? `Or Roll All <small>· ${n} kept</small>` : 'Or Roll All';
-  $('rollAll').classList.toggle('off', n === 3);
+  const n = lockedCount(), all = LAYERS().length;
+  $('rollLabel').innerHTML = n === all ? 'All Kept' : n ? `Or Roll All <small>· ${n} kept</small>` : 'Or Roll All';
+  $('rollAll').classList.toggle('off', n === all);
 }
 function renderAll() {
-  renderDrum(); renderStrum(); renderChords(); renderChal(); renderTools(); renderPos(true);
+  renderDrum(); renderStrum(); renderChords(); renderBass(); renderChal(); renderTools(); renderPos(true);
   lastTile = -2; lastForm = -2;
 }
 function flash(layer) {
-  const id = layer === 'drum' ? 'drumBody' : layer === 'strum' ? 'strumBody' : 'chordBody';
+  const id = ({ drum: 'drumBody', strum: 'strumBody', chords: 'chordBody', bass: 'bassBody' })[layer];
   const el = $(id); el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
   const dice = document.querySelector(`.step[data-step="${layer}"] .tool.dice`); if (dice) { dice.classList.remove('spin'); void dice.offsetWidth; dice.classList.add('spin'); }
 }
@@ -6087,11 +6760,14 @@ function frame() {
     const c = Math.floor(frac * e.beats) + 1;
     if (countShown !== c) { countShown = c; setPlay(); }
     if (sh) sh.style.opacity = '0';
+    if ($('bassHead')) $('bassHead').style.opacity = '0';
     setText('posMain', 'Count'); setText('posSub', 'Here we go');
     return;
   }
   if (countShown) { countShown = 0; setPlay(); }
   const x = LBL + frac * GW;
+  const bh = $('bassHead');
+  if (bh && S.bass) { const r = mod(e.bar - org.bass, S.bass.bars.length); bh.setAttribute('x1', x); bh.setAttribute('x2', x); bh.setAttribute('y1', r * 56 + 2); bh.setAttribute('y2', r * 56 + 54); bh.style.opacity = ''; }
   if (sh && S.strum) { sh.style.opacity = ''; const r = mod(e.bar - org.strum, S.strum.bars.length); sh.setAttribute('x1', x); sh.setAttribute('x2', x); sh.setAttribute('y1', r * 42 + 4); sh.setAttribute('y2', r * 42 + 42); }
   const lb = loopBars();
   const pos = S.prog ? mod(e.bar - org.chords, lb) + 1 : mod(e.bar - org.strum, lb) + 1;
@@ -6175,6 +6851,7 @@ function serialize() {
   return { v: 1,
     d: { st: d.styleId, m: d.meter, n: tpl.name, bpm: d.bpm, I: +d.I.toFixed(3), B: +d.B.toFixed(3), sw: +d.swing.toFixed(3), seed: d.seed, t: d.time },
     s: v.strum ? Strum.toSaved(v.strum) : null,
+    b: v.bass ? BassLine.clean(v.bass) : null,
     c: v.prog ? { k: [v.prog.key.tonic, v.prog.key.mode], sec: v.prog.sec, nk: v.prog.nick || '', lk: v.prog.like || '', f: v.prog.form, sig: v.prog.sig, rn: v.prog.rn || '',
       ch: v.prog.chords.map(c => [c.root, c.acc, c.q, c.shape.frets, c.shape.fingers, c.shape.barre]), sq: v.prog.seq.map(s => [s.ci, s.bars]) } : null };
 }
@@ -6194,20 +6871,21 @@ function deserialize(j) {
       seq: j.c.sq.map(([ci, bars]) => ({ ci: ci | 0, bars: +bars || 1 })) };
     if (prog.seq.some(s => !prog.chords[s.ci])) prog = null;
   }
-  return { drum, strum, prog };
+  const bass = j.b ? BassLine.clean(j.b) : null;
+  return { drum, strum, prog, bass };
 }
 function applyJam(jam) {
   if (!jam) return false;
   if (!jam.strum) jam.strum = rollStrumFor(jam.drum);
   if (!jam.prog) jam.prog = rollProg({ drum: jam.drum });
-  setLayer('drum', jam.drum); setLayer('strum', jam.strum); setLayer('prog', jam.prog);
+  setLayer('drum', jam.drum); setLayer('strum', jam.strum); setLayer('prog', jam.prog); setLayer('bass', jam.bass || null);
   if (!sched.playing) applyMix();
   save(); restartNow(); renderAll(); ['drum', 'strum', 'chords'].forEach(flash);
   return true;
 }
 const readKeep = () => { try { return JSON.parse(localStorage.getItem(KEEP) || '[]') || []; } catch (e) { return []; } };
 const writeKeep = l => { try { localStorage.setItem(KEEP, JSON.stringify(l)); } catch (e) {} };
-const jamSig = j => JSON.stringify([j.d.n, j.d.bpm, j.s && j.s.bars, j.c && j.c.sig]);
+const jamSig = j => JSON.stringify([j.d.n, j.d.bpm, j.s && j.s.bars, j.c && j.c.sig, j.b && j.b.bars]);
 function isKept() { const s = jamSig(serialize()); return readKeep().some(k => jamSig(k.jam) === s); }
 function toggleKeep() {
   const j = serialize(), s = jamSig(j);
@@ -6223,7 +6901,7 @@ function renderKeepers() {
     const j = k.jam;
     const strum = j.s && Strum.BY_ID[j.s.id] ? Strum.BY_ID[j.s.id].name : 'no strum';
     const chords = j.c ? `${Changes.theory.keyShort({ tonic: j.c.k[0], mode: j.c.k[1] })}: ${esc(j.c.sig)}` : 'no chords';
-    return `<div class="item keeper"><button data-keep="${i}"><b>${esc(j.d.n)} · ${j.d.bpm | 0} BPM</b><small>${esc(strum)} · ${chords}</small></button><button class="tool" data-unkeep="${i}" aria-label="Delete keeper">${I.x}</button></div>`;
+    return `<div class="item keeper"><button data-keep="${i}"><b>${esc(j.d.n)} · ${j.d.bpm | 0} BPM</b><small>${esc(strum)} · ${chords}${j.b ? ' · bass: ' + esc(j.b.name) : ''}</small></button><button class="tool" data-unkeep="${i}" aria-label="Delete keeper">${I.x}</button></div>`;
   }).join('');
 }
 const b64url = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -6234,6 +6912,7 @@ function jamText() {
   let t = `Jam Roulette\nDrums: ${tpl.name} (${STYLE_BY_ID[tpl.style].name}, ${tpl.meter}) at ${d.bpm} BPM`;
   if (v.strum) t += `\nStrum: ${v.strum.name}. ${v.strum.tip}`;
   if (p) t += `\nChords in ${Prog.keyShort(p.key)}: ` + p.seq.map(s => `${Prog.chordName(p.chords[s.ci])} (${barsTxt(s.bars)})`).join(', ');
+  if (v.bass) t += `\nBass: ${v.bass.name}. ${v.bass.tip}`;
   return t;
 }
 async function share() {
@@ -6249,8 +6928,8 @@ async function share() {
 // ---------------- persistence ----------------
 function save() {
   try {
-    const o = { ...S, jam: serialize(), chalV2: 1 };
-    delete o.drum; delete o.strum; delete o.prog;
+    const o = { ...S, jam: serialize(), chalV2: 1, bassV2: 1 };
+    delete o.drum; delete o.strum; delete o.prog; delete o.bass;
     localStorage.setItem(STORE, JSON.stringify(o));
   } catch (e) {}
 }
@@ -6259,14 +6938,15 @@ function load() {
   try {
     const o = JSON.parse(localStorage.getItem(STORE) || 'null');
     if (!o) return false;
-    for (const k of ['locks', 'modes', 'mix']) if (o[k]) S[k] = { ...S[k], ...o[k] };
+    for (const k of ['locks', 'modes', 'mix', 'mute']) if (o[k]) S[k] = { ...S[k], ...o[k] };
     if (!o.chalV2) S.modes.chal = true;
+    if (!o.bassV2) S.mute.bass = false;   // the old kick bass was off by default; the bass line is its own step now
     for (const k of ['every', 'tone', 'volD', 'volG', 'volB', 'cx', 'countIn', 'fills', 'level', 'styleFilter', 'chal']) if (o[k] !== undefined) S[k] = o[k];
     if (!['simple', 'medium', 'advanced'].includes(S.cx)) S.cx = 'simple';
     if (!['clean', 'edge', 'acoustic'].includes(S.tone)) S.tone = 'clean';
     if (S.styleFilter && !STYLE_BY_ID[S.styleFilter]) S.styleFilter = null;
     const jam = deserialize(o.jam);
-    if (jam) { S.drum = jam.drum; S.strum = jam.strum; S.prog = jam.prog; }
+    if (jam) { S.drum = jam.drum; S.strum = jam.strum; S.prog = jam.prog; S.bass = jam.bass; }
     return true;
   } catch (e) {}
   return false;
@@ -6287,7 +6967,7 @@ function tap() {
 function setBpm(v) {
   const d = { ...view().drum, bpm: clamp(Math.round(v), 40, 240) };
   if (sched.playing) { S.drum.bpm = d.bpm; if (pend.drum) pend.drum.bpm = d.bpm; } else S.drum = d;
-  applyMix(); save(); renderDrum(); strumGrid(); renderPos();
+  applyMix(); save(); renderDrum(); strumGrid(); bassGrid(); renderPos();
 }
 
 // ---------------- events ----------------
@@ -6299,12 +6979,12 @@ document.addEventListener('click', e => {
     // build up step by step: locking the drums brings in a strum, locking the strum brings in chords
     if (S.locks[k] && k === 'drum' && !view().strum) { doRoll('strum'); toast('Drums kept. Here’s a strum: roll until one fits, then keep it.'); }
     else if (S.locks[k] && k === 'strum' && !view().prog) { doRoll('chords'); toast('Strum kept. Here are some chords: roll until you like them.'); }
+    else if (S.locks[k] && k === 'chords' && !view().bass) toast('Chords kept. Want a bass line too? Roll step 4, or just jam.');
     return;
   }
   if (t.dataset.mute) {
     const k = t.dataset.mute; S.mute[k] = !S.mute[k]; save(); renderTools();
     if (S.mute[k] && ctx && sched.playing) { if (k === 'drum') mixer.fadeAll(ctx.currentTime, 0.03); else if (k === 'gtr') guitar.stopAll(ctx.currentTime); else bass.stopAll(ctx.currentTime); }
-    if (k === 'bass' && !S.mute.bass) toast('Bass on: it plays the chord roots with the kick drum.');
     return;
   }
   if (t.dataset.chal) { rollChal(t.dataset.chal); save(); renderChal(); return; }
@@ -6346,8 +7026,8 @@ for (const id of ['volD', 'volG', 'volB']) $(id).addEventListener('input', e => 
   applyVolumes(); save(); renderTools();
 });
 $('resetBtn').addEventListener('click', () => {
-  setLayer('strum', null); setLayer('prog', null);
-  S.locks = { ...S.locks, drum: false, strum: false, chords: false };
+  setLayer('strum', null); setLayer('prog', null); setLayer('bass', null);
+  S.locks = { ...S.locks, drum: false, strum: false, chords: false, bass: false };
   save(); hideSheet(); restartNow(); renderAll(); window.scrollTo({ top: 0, behavior: 'smooth' });
   toast('Starting over. Roll drums until you like them, then keep them.');
 });
@@ -6363,7 +7043,7 @@ function boot() {
   const m = /#j=([A-Za-z0-9_-]+)/.exec(location.hash);
   if (m) { try { jam = deserialize(JSON.parse(unb64url(m[1]))); } catch (e) {} history.replaceState(null, '', location.pathname + location.search); }
   load();
-  if (jam) { S.drum = jam.drum; S.strum = jam.strum; S.prog = jam.prog; S.locks = { ...S.locks, drum: true, strum: !!jam.strum, chords: !!jam.prog }; }
+  if (jam) { S.drum = jam.drum; S.strum = jam.strum; S.prog = jam.prog; S.bass = jam.bass; S.locks = { ...S.locks, drum: true, strum: !!jam.strum, chords: !!jam.prog, bass: !!jam.bass }; }
   if (!S.drum) S.drum = rollDrum({});
   const fresh = !jam && !localStorage_has();
   renderAll();
@@ -6371,7 +7051,7 @@ function boot() {
   if (jam) setTimeout(() => toast('Shared jam loaded and locked. Press play.'), 400);
   else if (fresh) setTimeout(() => toast('Roll drums until you like them, then tap the lock to keep them.'), 600);
   loadAudio().catch(err => { console.error(err); toast('Could not load the sounds on this browser.'); });
-  window.__jam = { S, sched, view, rollAll, doRoll, serialize, deserialize, org, chordAt, guitarBar, get ctx() { return ctx; }, get guitar() { return guitar; }, get mixer() { return mixer; }, get buses() { return { master, drumBus, gtrBus }; }, renderAll, start, stop, setLayer, rollStrum, rollProg, rollDrum, tplNow };
+  window.__jam = { S, sched, view, rollAll, doRoll, bassBar, rollBass, get bass() { return bass; }, serialize, deserialize, org, chordAt, guitarBar, get ctx() { return ctx; }, get guitar() { return guitar; }, get mixer() { return mixer; }, get buses() { return { master, drumBus, gtrBus }; }, renderAll, start, stop, setLayer, rollStrum, rollProg, rollDrum, tplNow };
 }
 boot();
 })();

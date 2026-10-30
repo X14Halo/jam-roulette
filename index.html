@@ -7325,9 +7325,16 @@ function loadPreset(i) {
   toast(`Loaded “${k.name || presetName(k.jam)}”. Everything in it is kept.`);
 }
 const fileSafe = t => String(t).replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-').slice(0, 40) || 'jam';
+// inside the Claude app the viewer hands out files itself; on the website this is null and the browser does it
+const downloadsP = (() => { try { return window.claude && window.claude.use ? window.claude.use('downloads') : Promise.resolve(null); } catch (e) { return Promise.resolve(null); } })();
 async function exportPresets(list, base) {
   const data = JSON.stringify({ app: 'jam-roulette', version: 1, exported: new Date().toISOString(), presets: list.map(k => ({ name: k.name || presetName(k.jam), t: k.t, jam: k.jam })) }, null, 1);
   const fname = `${fileSafe(base)}.jam-roulette.json`;
+  const dl = await downloadsP.catch(() => null);
+  if (dl) {
+    try { await dl.save({ filename: fname, data }); toast(list.length === 1 ? 'Preset exported.' : `${list.length} presets exported.`); return; }
+    catch (e) { const c = e && e.code; if (c === 'declined') return; if (c === 'rate_limited') { toast('One moment, then try again.'); return; } }
+  }
   // on a phone the share sheet can send the file to the band or save it to Files / Drive
   try {
     const file = new File([data], fname, { type: 'application/json' });
